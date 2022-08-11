@@ -11,8 +11,14 @@ public class Player : MonoBehaviour
     GameObject _laser;
 
     [SerializeField]
+    GameObject _tripleShot;
+
+    [SerializeField]
     float _fireRate = 0.3f;
     float _canFire = 0f;
+
+    [SerializeField]
+    bool _isTripleShot;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +33,23 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
         {
-            _canFire = Time.time + _fireRate;
-
-            Instantiate(_laser, transform.position + new Vector3 (0, 1f, 0), Quaternion.identity);
+            FireLaser();
         }
 
+    }
+
+    private void FireLaser()
+    {
+        _canFire = Time.time + _fireRate;
+
+        if (_isTripleShot == true)
+        {
+            Instantiate(_tripleShot, transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+        }
     }
 
     private void Movement()
@@ -62,5 +80,18 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(transform.position.x, -4f, 0);
         }
+    }
+
+    public void ActivateTripleShot()
+    {
+        StartCoroutine(TripleShotPoweup());
+    }
+
+    IEnumerator TripleShotPoweup()
+    {
+        _isTripleShot = true;
+        yield return new WaitForSeconds(5f);
+        _isTripleShot = false;
+
     }
 }

@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     float _moveSpeed = 3.5f;
 
     [SerializeField]
+    float _speedMultiplier = 2f;
+
+    [SerializeField]
     GameObject _laser;
 
     [SerializeField]
@@ -20,10 +23,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool _isTripleShot;
 
+    public bool isShielded;
+
+    public GameObject shield;
+
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+
+        
     }
 
     // Update is called once per frame
@@ -57,6 +66,7 @@ public class Player : MonoBehaviour
         // Get input from the user
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
+
         //Move the Player
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _moveSpeed * Time.deltaTime);
 
@@ -93,5 +103,26 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
         _isTripleShot = false;
 
+    }
+
+
+    public void ActivateSpeedup()
+    {
+        StartCoroutine(SpeedupPoweup());
+    }
+
+    IEnumerator SpeedupPoweup()
+    {
+        _moveSpeed *= _speedMultiplier;
+        yield return new WaitForSeconds(5f);
+        _moveSpeed /= _speedMultiplier;
+
+    }
+
+    public void ActivateShield()
+    {
+        isShielded = true;
+
+        shield.SetActive(true);
     }
 }

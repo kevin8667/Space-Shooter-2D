@@ -9,6 +9,9 @@ public class SpawnManager : MonoBehaviour
 
     GameObject _player;
 
+    [SerializeField]
+    GameObject[] _powerups;
+
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +21,7 @@ public class SpawnManager : MonoBehaviour
         if(_player != null)
         {
             StartCoroutine(SpawnRoutine());
+            StartCoroutine(SpawanPowerupsRoutine());
         }
         
     }
@@ -30,7 +34,7 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnRoutine()
     {
-        while (_player.activeInHierarchy)
+        while (_player != null)
         {
             Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
 
@@ -39,6 +43,21 @@ public class SpawnManager : MonoBehaviour
             newEnemy.transform.parent = gameObject.transform;
 
             yield return new WaitForSeconds(3f);
+        }
+    }
+
+    IEnumerator SpawanPowerupsRoutine()
+    {
+        while (_player != null)
+        {
+            Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
+
+            Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
+
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+
+            
+
         }
     }
 }

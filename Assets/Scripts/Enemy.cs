@@ -7,11 +7,16 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     float _speed = 4.5f;
 
+    [SerializeField]
+    int scoreIncrement = 10;
+
+    GameManager _gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
     }
 
     // Update is called once per frame
@@ -46,6 +51,9 @@ public class Enemy : MonoBehaviour
         {
 
             Destroy(other.gameObject);
+
+            _gameManager.AddScore(scoreIncrement);
+
             Destroy(gameObject);
 
         }

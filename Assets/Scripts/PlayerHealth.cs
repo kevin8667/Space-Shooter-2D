@@ -5,13 +5,17 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField]
-    int _Health = 3;
+    int _health = 3;
 
     Player _player;
+
+    UIManager _UIManager;
 
     private void Start()
     {
         _player = gameObject.GetComponent<Player>();
+
+        _UIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
     }
 
     public void Damage()
@@ -26,10 +30,13 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        _Health--;
+        _health--;
 
-        if (_Health < 1)
+        _UIManager.UpadateLives(_health);
+
+        if (_health < 1)
         {
+            _UIManager.ShowGameOverUI();
             Destroy(gameObject);
         }
 

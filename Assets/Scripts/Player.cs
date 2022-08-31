@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool _isTripleShot;
 
+    [SerializeField]
+    bool _isSpeedUp;
+
     public bool isShielded;
 
     public GameObject shield;
@@ -108,13 +111,22 @@ public class Player : MonoBehaviour
 
     public void ActivateSpeedup()
     {
-        StartCoroutine(SpeedupPoweup());
+        if (!_isSpeedUp)
+        {
+            StartCoroutine(SpeedupPoweup());
+        }
+        
     }
 
     IEnumerator SpeedupPoweup()
     {
+
         _moveSpeed *= _speedMultiplier;
+        _isSpeedUp = true;
+
         yield return new WaitForSeconds(5f);
+
+        _isSpeedUp = false;
         _moveSpeed /= _speedMultiplier;
 
     }

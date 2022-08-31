@@ -20,7 +20,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     TMP_Text _gameOverText;
-        
+
+    [SerializeField]
+    GameObject _pauseMenu;
    
 
     // Start is called before the first frame update
@@ -45,5 +47,10 @@ public class UIManager : MonoBehaviour
     public void ShowGameOverUI()
     {
         _gameOverText.gameObject.SetActive(true);
+    }
+
+    public void TogglePauseMenu()
+    {
+        _pauseMenu.SetActive(!_pauseMenu.activeInHierarchy);
     }
 }

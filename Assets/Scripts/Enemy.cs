@@ -12,10 +12,17 @@ public class Enemy : MonoBehaviour
 
     GameManager _gameManager;
 
+    Animator _anim;
+
+    bool _isDestroyed;
+
+
     // Start is called before the first frame update
     void Start()
     {
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        _anim = GetComponent<Animator>();
 
     }
 
@@ -24,9 +31,9 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-        if(transform.position.y < -5f)
+        if (transform.position.y < -5f && !_isDestroyed)
         {
-            transform.position = new Vector3(Random.Range(-8f, 8f), 7f , 0);
+            transform.position = new Vector3(Random.Range(-8f, 8f), 7f, 0);
         }
 
     }
@@ -44,20 +51,35 @@ public class Enemy : MonoBehaviour
                 playerHealth.Damage();
             }
 
+            _anim.SetTrigger("OnEnemyDestroy");
 
-            Destroy(gameObject);
+            GetComponent<Collider2D>().enabled = false;
+
+            _isDestroyed = true;
+
+            Destroy(gameObject, 2.7f);
+
+
         }
         else if (other.tag == "Laser")
         {
 
             Destroy(other.gameObject);
 
+            _anim.SetTrigger("OnEnemyDestroy");
+
+            GetComponent<Collider2D>().enabled = false;
+
             _gameManager.AddScore(scoreIncrement);
 
-            Destroy(gameObject);
+            _isDestroyed = true;
+
+            Destroy(gameObject, 2.7f);
 
         }
 
     }
+
+
 
 }

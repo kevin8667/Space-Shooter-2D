@@ -19,6 +19,9 @@ public class Powerup : MonoBehaviour
     private float _speed = 3f;
 
 
+    [SerializeField]
+    AudioClip _powerupSFX;
+
     // Update is called once per frame
     void Update()
     {
@@ -39,6 +42,8 @@ public class Powerup : MonoBehaviour
             if(player != null)
             {
 
+                AudioSource.PlayClipAtPoint(_powerupSFX, GameObject.Find("Main Camera").transform.position, 0.6f);
+
                 switch (_poweupType)
                 {
                     case PoweupType.TripleShot:
@@ -52,9 +57,8 @@ public class Powerup : MonoBehaviour
                         break;
                 }
 
-                
             }
-            
+
             Destroy(gameObject);
         }
         

@@ -149,6 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _poweupType: 1
   _speed: 3
+  _powerupSFX: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!95 &751582304
 Animator:
   serializedVersion: 4

@@ -16,6 +16,11 @@ public class Enemy : MonoBehaviour
 
     bool _isDestroyed;
 
+    [SerializeField]
+    AudioClip _explosionSFX;
+
+    AudioSource _audioSource;
+
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +28,17 @@ public class Enemy : MonoBehaviour
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         _anim = GetComponent<Animator>();
+
+        _audioSource = GetComponent<AudioSource>();
+
+        if(_audioSource == null)
+        {
+            Debug.LogError("The Audio Source is NULL!");
+        }
+        else
+        {
+            _audioSource.clip = _explosionSFX;
+        }
 
     }
 
@@ -53,6 +69,8 @@ public class Enemy : MonoBehaviour
 
             _anim.SetTrigger("OnEnemyDestroy");
 
+            _audioSource.Play();
+
             GetComponent<Collider2D>().enabled = false;
 
             _isDestroyed = true;
@@ -67,6 +85,8 @@ public class Enemy : MonoBehaviour
             Destroy(other.gameObject);
 
             _anim.SetTrigger("OnEnemyDestroy");
+
+            _audioSource.Play();
 
             GetComponent<Collider2D>().enabled = false;
 

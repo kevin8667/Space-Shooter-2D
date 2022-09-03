@@ -30,12 +30,27 @@ public class Player : MonoBehaviour
 
     public GameObject shield;
 
+    [SerializeField]
+    AudioClip _laserSFX;
+
+    AudioSource _audioSource;
+
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+        _moveSpeed = 3.5f;
 
-        
+        _audioSource = gameObject.GetComponent<AudioSource>();
+
+        if (_audioSource == null)
+        {
+            Debug.LogError("The Audio Source is NULL!");
+        }
+        else
+        {
+            _audioSource.clip = _laserSFX;
+        }
     }
 
     // Update is called once per frame
@@ -56,10 +71,15 @@ public class Player : MonoBehaviour
 
         if (_isTripleShot == true)
         {
+
+            _audioSource.Play();
+
             Instantiate(_tripleShot, transform.position, Quaternion.identity);
+
         }
         else
         {
+            _audioSource.Play();
             Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
         }
     }
@@ -136,5 +156,10 @@ public class Player : MonoBehaviour
         isShielded = true;
 
         shield.SetActive(true);
+    }
+
+    public void StopMoving()
+    {
+        _moveSpeed = 0;
     }
 }

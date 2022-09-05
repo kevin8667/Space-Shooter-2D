@@ -11,6 +11,8 @@ public class PlayerHealth : MonoBehaviour
 
     UIManager _UIManager;
 
+    GameManager _gameManager;
+
     [SerializeField]
     GameObject _newExplosionPrefab;
 
@@ -20,13 +22,20 @@ public class PlayerHealth : MonoBehaviour
     {
         _player = gameObject.GetComponent<Player>();
         _UIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
-        
+
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+
 
         if (_UIManager == null)
         {
             Debug.LogError("The UI Manager is NULL!");
         }
 
+        if(_gameManager == null)
+        {
+            Debug.LogError("The Game Manager is NULL!");
+        }
         
         
     }
@@ -50,6 +59,8 @@ public class PlayerHealth : MonoBehaviour
         if (_health < 1)
         {
             _UIManager.ShowGameOverUI();
+
+            _gameManager._isGameOVer = true;
 
             _player.StopMoving();
 

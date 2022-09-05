@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public int score;
 
+    public bool _isGameOVer;
+
     [SerializeField]
     UIManager _UIManager;
 
@@ -15,15 +17,28 @@ public class GameManager : MonoBehaviour
     {
         score = 0;
 
+        _isGameOVer = false;
+
         Time.timeScale = 1;
+
+
     }
 
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !_isGameOVer)
         {
             TogglePause();
+
+        }else if (Input.GetKeyDown(KeyCode.Escape) && _isGameOVer)
+        {
+            Application.Quit();
+        }
+
+        if(Input.GetKeyDown(KeyCode.R) && _isGameOVer)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 

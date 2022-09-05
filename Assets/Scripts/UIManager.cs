@@ -19,7 +19,8 @@ public class UIManager : MonoBehaviour
     TMP_Text _score;
 
     [SerializeField]
-    TMP_Text _gameOverText;
+    TMP_Text _gameOverText, _gameOverTips;
+
 
     [SerializeField]
     GameObject _pauseMenu;
@@ -47,6 +48,7 @@ public class UIManager : MonoBehaviour
     public void ShowGameOverUI()
     {
         _gameOverText.gameObject.SetActive(true);
+        _gameOverTips.gameObject.SetActive(true);
     }
 
     public void TogglePauseMenu()

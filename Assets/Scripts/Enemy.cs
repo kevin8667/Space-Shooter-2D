@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     float _speed = 4.5f;
 
     [SerializeField]
-    int scoreIncrement = 10;
+    int _scoreIncrement = 10;
 
     GameManager _gameManager;
 
@@ -90,7 +90,7 @@ public class Enemy : MonoBehaviour
 
             GetComponent<Collider2D>().enabled = false;
 
-            _gameManager.AddScore(scoreIncrement);
+            _gameManager.AddScore(_scoreIncrement);
 
             _isDestroyed = true;
 

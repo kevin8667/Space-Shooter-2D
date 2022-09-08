@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour
 
     Player _player;
 
-    UIManager _UIManager;
+    UIManager _uIManager;
 
     GameManager _gameManager;
 
@@ -17,17 +17,16 @@ public class PlayerHealth : MonoBehaviour
     GameObject _newExplosionPrefab;
 
 
-
     private void Start()
     {
         _player = gameObject.GetComponent<Player>();
-        _UIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
+        _uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
 
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
 
 
-        if (_UIManager == null)
+        if (_uIManager == null)
         {
             Debug.LogError("The UI Manager is NULL!");
         }
@@ -54,13 +53,13 @@ public class PlayerHealth : MonoBehaviour
 
         _health--;
 
-        _UIManager.UpadateLives(_health);
+        _uIManager.UpadateLives(_health);
 
         if (_health < 1)
         {
-            _UIManager.ShowGameOverUI();
+            _uIManager.ShowGameOverUI();
 
-            _gameManager._isGameOVer = true;
+            _gameManager.isGameOVer = true;
 
             _player.StopMoving();
 

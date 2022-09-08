@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    float _moveSpeed = 3.5f;
+    float _moveSpeed;
 
     [SerializeField]
     float _speedMultiplier = 2f;
@@ -26,9 +26,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool _isSpeedUp;
 
+    bool _isBoosterOn;
+
     public bool isShielded;
 
     public GameObject shield;
+
+    [SerializeField]
+    GameObject _thruster;
 
     [SerializeField]
     AudioClip _laserSFX;
@@ -39,7 +44,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
-        _moveSpeed = 3.5f;
+        _moveSpeed = 5f;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
 
@@ -56,6 +61,9 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        Ignition();
+
         Movement();
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
@@ -91,7 +99,15 @@ public class Player : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
 
         //Move the Player
-        transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _moveSpeed * Time.deltaTime);
+        if (_isBoosterOn)
+        {
+            transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * (_moveSpeed * 1.5f) * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _moveSpeed * Time.deltaTime);
+        }
+        
 
         //if x bigger than a value
         if (transform.position.x > 10f)
@@ -144,10 +160,29 @@ public class Player : MonoBehaviour
         _moveSpeed *= _speedMultiplier;
         _isSpeedUp = true;
 
+        if (_isBoosterOn)
+        {
+            Boost();
+        }
+        else
+        {
+            _thruster.SetActive(true);
+        }
+
         yield return new WaitForSeconds(5f);
 
         _isSpeedUp = false;
         _moveSpeed /= _speedMultiplier;
+
+        if (_isBoosterOn)
+        {
+            Deboost();
+        }
+        else
+        {
+            _thruster.SetActive(false);
+        }
+        
 
     }
 
@@ -162,4 +197,50 @@ public class Player : MonoBehaviour
     {
         _moveSpeed = 0;
     }
+
+    void Ignition()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _isBoosterOn = true;
+
+            if (_isSpeedUp)
+            {
+                Boost();
+            }
+            else
+            {
+                _thruster.SetActive(_isBoosterOn);
+            }
+
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _isBoosterOn = false;
+
+            if (_isSpeedUp)
+            {
+                Deboost();
+            }
+            else
+            {
+                _thruster.SetActive(_isBoosterOn);
+            }
+
+        }
+    }
+
+    void Boost()
+    {
+        _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y - .75f, _thruster.transform.position.z);
+        _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y + .5f, _thruster.transform.localScale.z);
+    }
+
+    void Deboost()
+    {
+        _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y + .75f, _thruster.transform.position.z);
+        _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y - .5f, _thruster.transform.localScale.z);
+    }
+
+
 }

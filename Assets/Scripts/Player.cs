@@ -40,6 +40,8 @@ public class Player : MonoBehaviour
 
     AudioSource _audioSource;
 
+    PlayerHealth _playHealth;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +49,8 @@ public class Player : MonoBehaviour
         _moveSpeed = 5f;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
+
+        _playHealth = gameObject.GetComponent<PlayerHealth>();
 
         if (_audioSource == null)
         {
@@ -56,6 +60,12 @@ public class Player : MonoBehaviour
         {
             _audioSource.clip = _laserSFX;
         }
+
+        if (_playHealth == null)
+        {
+            Debug.LogError("The Player Health is NULL!");
+        }
+
     }
 
     // Update is called once per frame
@@ -162,7 +172,7 @@ public class Player : MonoBehaviour
 
         if (_isBoosterOn)
         {
-            Boost();
+            ToggleBoost(true);
         }
         else
         {
@@ -176,7 +186,7 @@ public class Player : MonoBehaviour
 
         if (_isBoosterOn)
         {
-            Deboost();
+            ToggleBoost(false);
         }
         else
         {
@@ -188,9 +198,21 @@ public class Player : MonoBehaviour
 
     public void ActivateShield()
     {
-        isShielded = true;
-
-        shield.SetActive(true);
+        switch (_playHealth._shieldHealth)
+        {
+            case 2:
+                _playHealth.ShieldRecover();
+                break;
+            case 1:
+                _playHealth.ShieldRecover();
+                break;
+            case 0:
+                _playHealth._shieldHealth = 3;
+                _playHealth.SetShield();
+                isShielded = true;
+                shield.SetActive(true);
+                break;
+        }    
     }
 
     public void StopMoving()
@@ -206,11 +228,11 @@ public class Player : MonoBehaviour
 
             if (_isSpeedUp)
             {
-                Boost();
+                ToggleBoost(true);
             }
             else
             {
-                _thruster.SetActive(_isBoosterOn);
+                _thruster.SetActive(true);
             }
 
         }
@@ -220,27 +242,28 @@ public class Player : MonoBehaviour
 
             if (_isSpeedUp)
             {
-                Deboost();
+                ToggleBoost(false);
             }
             else
             {
-                _thruster.SetActive(_isBoosterOn);
+                _thruster.SetActive(false);
             }
 
         }
     }
 
-    void Boost()
+    void ToggleBoost(bool isBoost)
     {
-        _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y - .75f, _thruster.transform.position.z);
-        _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y + .5f, _thruster.transform.localScale.z);
+        if (isBoost)
+        {
+            _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y - .75f, _thruster.transform.position.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y + .5f, _thruster.transform.localScale.z);
+        }
+        else
+        {
+            _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y + .75f, _thruster.transform.position.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y - .5f, _thruster.transform.localScale.z);
+        }   
     }
-
-    void Deboost()
-    {
-        _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y + .75f, _thruster.transform.position.z);
-        _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y - .5f, _thruster.transform.localScale.z);
-    }
-
 
 }

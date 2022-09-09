@@ -16,15 +16,22 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     GameObject _newExplosionPrefab;
 
+    public int _shieldHealth = 0;
+
+    Color _shieldColor;
+
+    [SerializeField]
+    AudioClip _shieldBreakingSFX;
 
     private void Start()
     {
         _player = gameObject.GetComponent<Player>();
+
         _uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
 
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-
+        _shieldColor = _player.shield.GetComponent<SpriteRenderer>().color;
 
         if (_uIManager == null)
         {
@@ -35,7 +42,11 @@ public class PlayerHealth : MonoBehaviour
         {
             Debug.LogError("The Game Manager is NULL!");
         }
-        
+
+        if (_shieldColor == null)
+        {
+            Debug.LogError("The Shield is NULL!");
+        }
         
     }
 
@@ -44,9 +55,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (_player.isShielded)
         {
-            _player.isShielded = false;
-
-            _player.shield.SetActive(false);
+            ShieldDamage();
 
             return;
         }
@@ -70,5 +79,48 @@ public class PlayerHealth : MonoBehaviour
 
     }
 
+
+    void ShieldDamage()
+    {
+        if (_shieldHealth > 0)
+        {
+            _shieldHealth -= 1;
+
+            SetShield();
+        }
+
+        
+    }
+
+    public void ShieldRecover()
+    {
+        if (_shieldHealth < 3)
+        {
+            _shieldHealth += 1;
+
+            SetShield();
+        }
+    }
+
+    public void SetShield()
+    {
+        switch (_shieldHealth)
+        {
+            case 3:
+                _player.shield.GetComponent<SpriteRenderer>().color = Color.white;
+                break;
+            case 2:
+                _player.shield.GetComponent<SpriteRenderer>().color = Color.yellow;
+                break;
+            case 1:
+                _player.shield.GetComponent<SpriteRenderer>().color = Color.red;
+                break;
+            case 0:
+                AudioSource.PlayClipAtPoint(_shieldBreakingSFX, GameObject.Find("Main Camera").transform.position, 0.6f);
+                _player.isShielded = false;
+                _player.shield.SetActive(false);
+                break;
+        }
+    }
 
 }

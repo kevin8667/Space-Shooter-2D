@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -11,14 +12,17 @@ public class Player : MonoBehaviour
     float _speedMultiplier = 2f;
 
     [SerializeField]
-    GameObject _laser;
-
-    [SerializeField]
-    GameObject _tripleShot;
-
-    [SerializeField]
     float _fireRate = 0.3f;
+    
     float _canFire = 0f;
+
+    [SerializeField]
+    float _reloadTime = 3f;
+
+    float _holdTimer;
+
+    [SerializeField]
+    int _ammoCount = 15;
 
     [SerializeField]
     bool _isTripleShot;
@@ -28,29 +32,56 @@ public class Player : MonoBehaviour
 
     bool _isBoosterOn;
 
+    bool _isReloading;
+
     public bool isShielded;
 
     public GameObject shield;
 
     [SerializeField]
-    GameObject _thruster;
+    GameObject _laser;
 
     [SerializeField]
-    AudioClip _laserSFX;
+    GameObject _tripleShot;
+
+    [SerializeField]
+    GameObject _thruster;
+
+    Image _reloadImage;
+
+    RectTransform _canvasRect;
+
+    [SerializeField]
+    AudioClip _laserSFX, _reloadSFX;
 
     AudioSource _audioSource;
 
     PlayerHealth _playHealth;
 
+    UIManager _uImanager;
+
+    Vector2 _screenPoint;
+
+    Vector2 _canvasPos;
+
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+
         _moveSpeed = 5f;
+
+        _holdTimer = _reloadTime;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
 
         _playHealth = gameObject.GetComponent<PlayerHealth>();
+
+        _uImanager = GameObject.Find("UIManager").GetComponent<UIManager>();
+
+        _reloadImage = GameObject.Find("ReloadImage").GetComponent<Image>();
+
+        _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
 
         if (_audioSource == null)
         {
@@ -66,12 +97,35 @@ public class Player : MonoBehaviour
             Debug.LogError("The Player Health is NULL!");
         }
 
+        if (_uImanager == null)
+        {
+            Debug.LogError("The UI Manager is NULL!");
+        }
+        else
+        {
+            _uImanager.UpdateAmmo(_ammoCount);
+        }
+
+        if (_reloadImage == null)
+        {
+            Debug.LogError("The Reload Image is NULL!");
+        }
+        else
+        {
+            _reloadImage.fillAmount = 0;
+            _reloadImage.gameObject.SetActive(false);
+        }
+
+        if (_canvasRect == null)
+        {
+            Debug.LogError("The Canvas is NULL!");
+        } 
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
         Ignition();
 
         Movement();
@@ -81,24 +135,126 @@ public class Player : MonoBehaviour
             FireLaser();
         }
 
+        Reload();
+
     }
 
     private void FireLaser()
     {
         _canFire = Time.time + _fireRate;
 
-        if (_isTripleShot == true)
+        if (_ammoCount > 0)
         {
+            if (_isTripleShot == true)
+            {
+                _uImanager.UpdateAmmo(--_ammoCount);
 
-            _audioSource.Play();
+                _audioSource.Play();
 
-            Instantiate(_tripleShot, transform.position, Quaternion.identity);
+                Instantiate(_tripleShot, transform.position, Quaternion.identity);
 
+            }
+            else
+            {
+                _uImanager.UpdateAmmo(--_ammoCount);
+
+                _audioSource.Play();
+
+                Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+            }
+        }
+    }
+
+    void CalculateReloadImage()
+    {
+        //get the position of the Player in screen space
+        _screenPoint = Camera.main.WorldToScreenPoint(transform.position);
+
+        //transfrom the Player's position in screen space to the position in the local space of a RectTransform
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, _screenPoint, null, out _canvasPos);
+
+        //move the reaload image to the position of the corresponding Player's position on the canvas
+        _reloadImage.transform.localPosition = _canvasPos; 
+    }
+
+    void Reload()
+    {
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            if(_ammoCount < 15)
+            {
+                if (!_isReloading)
+                {
+                    _moveSpeed *= 0.5f;
+                    _isReloading = true;
+                }
+
+                _reloadImage.gameObject.SetActive(true);
+
+                CalculateReloadImage();
+
+                _holdTimer -= Time.deltaTime;
+
+                _reloadImage.fillAmount = 1f - _holdTimer / _reloadTime;
+            }
+
+            if (_holdTimer <= 0 && _ammoCount < 15)
+            {  
+                FinishingReload();
+            }
+        }
+        else if(Input.GetKeyUp(KeyCode.R))
+        {
+            if (_isReloading)
+            {
+                _moveSpeed /= 0.5f;
+                _isReloading = false;
+            }
+
+            _reloadImage.gameObject.SetActive(false);
+
+            _reloadImage.fillAmount = 0;
+
+            _holdTimer = _reloadTime;
+        }
+
+        
+    }
+
+    void FinishingReload()
+    {
+        _ammoCount += 5;
+
+        if (_ammoCount > 15)
+        {
+            AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
+
+            _ammoCount = 15;
+
+            _moveSpeed /= 0.5f;
+
+            _isReloading = false;
+
+            _holdTimer = _reloadTime;
+
+            _reloadImage.fillAmount = 0;
+
+            _uImanager.UpdateAmmo(_ammoCount);
         }
         else
         {
-            _audioSource.Play();
-            Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+            AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
+
+            _moveSpeed /= 0.5f;
+
+            _isReloading = false;
+
+            _holdTimer = _reloadTime;
+
+            _reloadImage.fillAmount = 0;
+
+            _uImanager.UpdateAmmo(_ammoCount);
         }
     }
 
@@ -153,7 +309,6 @@ public class Player : MonoBehaviour
         _isTripleShot = false;
 
     }
-
 
     public void ActivateSpeedup()
     {

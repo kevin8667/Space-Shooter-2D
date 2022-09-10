@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     Sprite[] _lifeSprites;
 
     [SerializeField]
-    TMP_Text _score;
+    TMP_Text _score, _ammo;
 
     [SerializeField]
     TMP_Text _gameOverText, _gameOverTips;
@@ -37,6 +37,11 @@ public class UIManager : MonoBehaviour
     public void UpdateScore()
     {
         _score.text = "Score: "+ _gameManager.score;
+    }
+
+    public void UpdateAmmo(int ammo)
+    {
+        _ammo.text = "Ammo: " + ammo;
     }
 
     public void UpadateLives(int playerLives)

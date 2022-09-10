@@ -157,15 +157,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 5
   _speedMultiplier: 2
-  _laser: {fileID: 1778460645259023981, guid: 0dc5a87477dedf74bbf8d539b2f34503, type: 3}
-  _tripleShot: {fileID: 8901404973700989736, guid: 1286b02228acaab4c948e53f628fcd39, type: 3}
   _fireRate: 0.3
+  _reloadTime: 3
+  _ammoCount: 15
   _isTripleShot: 0
   _isSpeedUp: 0
   isShielded: 0
   shield: {fileID: 8929206222285230687}
+  _laser: {fileID: 1778460645259023981, guid: 0dc5a87477dedf74bbf8d539b2f34503, type: 3}
+  _tripleShot: {fileID: 8901404973700989736, guid: 1286b02228acaab4c948e53f628fcd39, type: 3}
   _thruster: {fileID: 1110095437630564203}
   _laserSFX: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _reloadSFX: {fileID: 8300000, guid: e0c9c107af890124e9db4c5d4d16736a, type: 3}
 --- !u!114 &1652860026155024674
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField]
-    int _health = 3;
+
+    public int health = 3;
 
     Player _player;
 
@@ -60,11 +60,11 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        _health--;
+        health--;
 
-        _uIManager.UpadateLives(_health);
+        _uIManager.UpadateLives(health);
 
-        if (_health < 1)
+        if (health < 1)
         {
             _uIManager.ShowGameOverUI();
 

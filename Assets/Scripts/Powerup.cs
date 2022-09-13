@@ -9,15 +9,17 @@ public class Powerup : MonoBehaviour
     {
         TripleShot,
         Speedup,
-        Shield
+        Shield,
+        ExtraHealth,
+        HomingLaser
     };
+
 
     [SerializeField]
     PoweupType _poweupType;
 
     [SerializeField]
     private float _speed = 3f;
-
 
     [SerializeField]
     AudioClip _powerupSFX;
@@ -39,7 +41,11 @@ public class Powerup : MonoBehaviour
         {
             Player player = other.gameObject.GetComponent<Player>();
 
-            if(player != null)
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+
+            UIManager uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
+
+            if (player != null)
             {
 
                 AudioSource.PlayClipAtPoint(_powerupSFX, GameObject.Find("Main Camera").transform.position, 0.6f);
@@ -54,6 +60,15 @@ public class Powerup : MonoBehaviour
                         break;
                     case PoweupType.Shield:
                         player.ActivateShield();
+                        break;
+                    case PoweupType.ExtraHealth:
+                        if(playerHealth.health < 3)
+                        {
+                            uIManager.UpadateLives(++playerHealth.health);
+                        }
+                        break;
+                    case PoweupType.HomingLaser:
+                        player.ActivateHomingLaser();
                         break;
                 }
 

@@ -4,23 +4,123 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
+
     [SerializeField]
     float _speed = 8.0f;
 
+    [SerializeField]
+    float _rotateSpeed = 200f;
 
-    // Update is called once per frame
+    [SerializeField]
+    bool _isHomingLaser;
+
+    List<GameObject> _targets;
+
+    Transform _transformMin;
+
+    Rigidbody2D _ridigBody2D;
+
+    float _minDistance = Mathf.Infinity;
+
+    float _distanceToTarget;
+
+    Vector2 _currentPos;
+
+    private void Start()
+    {
+        _ridigBody2D = GetComponent<Rigidbody2D>();
+
+        _currentPos = transform.position;
+
+        _targets = new List<GameObject>();
+
+    }
+
+
     void Update()
     {
-        transform.Translate(Vector3.up * _speed * Time.deltaTime);
-
-        if(transform.position.y > 8f)
+        if (!_isHomingLaser)
         {
-            if(transform.parent != null)
-            {
-                Destroy(transform.parent.gameObject);
-            }
+            transform.Translate(Vector3.up * _speed * Time.deltaTime);
 
-            Destroy(gameObject);
+            if (transform.position.y > 8f)
+            {
+                if (transform.parent != null)
+                {
+                    Destroy(transform.parent.gameObject);
+                }
+
+                Destroy(gameObject);
+            }
         }
     }
+
+    void FixedUpdate()
+    {
+        if (_isHomingLaser)
+        {
+
+            FindNearestTraget();
+
+            ChaseTarget();
+        }
+       
+    }
+
+   
+
+
+    void FindNearestTraget()
+    {
+        _targets = new List<GameObject>();
+
+        foreach (GameObject t in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            if (!t.gameObject.GetComponent<Enemy>().isDestroyed)
+            {
+                _targets.Add(t);
+            }
+
+        }
+
+        if(_targets.Count == 0)
+        {
+            _ridigBody2D.velocity = transform.up * _speed;
+        }
+
+        foreach (GameObject t in _targets)
+        {
+            if (t != null)
+            {
+                _distanceToTarget = Vector2.Distance(t.GetComponent<Transform>().position, _currentPos);
+                if (_distanceToTarget < _minDistance)
+                {
+                    _transformMin = t.GetComponent<Transform>();
+
+                    _minDistance = _distanceToTarget;
+                }
+            }
+        }
+    }
+
+    void ChaseTarget()
+    {
+        if (_transformMin != null && !_transformMin.GetComponent<Enemy>().isDestroyed)
+        {
+            Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
+
+            direction.Normalize();
+
+            float rotateAmount = Vector3.Cross(direction, transform.up).z;
+
+            _ridigBody2D.angularVelocity = -rotateAmount * _rotateSpeed;
+
+            _ridigBody2D.velocity = transform.up * _speed;
+
+            Destroy(gameObject, 8f);
+        }
+
+    }
+
 }
+

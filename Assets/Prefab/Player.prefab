@@ -157,14 +157,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 5
   _speedMultiplier: 2
-  _fireRate: 0.3
+  _fireRate: 0.15
   _reloadTime: 3
   _ammoCount: 15
-  _isTripleShot: 0
-  _isSpeedUp: 0
   isShielded: 0
   shield: {fileID: 8929206222285230687}
   _laser: {fileID: 1778460645259023981, guid: 0dc5a87477dedf74bbf8d539b2f34503, type: 3}
+  _homingLaser: {fileID: 4180101029269929479, guid: bf5556f01fc92874192c7a69f92d187d, type: 3}
   _tripleShot: {fileID: 8901404973700989736, guid: 1286b02228acaab4c948e53f628fcd39, type: 3}
   _thruster: {fileID: 1110095437630564203}
   _laserSFX: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
@@ -181,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fe690f05be56f540b7775a840ddf577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 3
+  health: 3
   _newExplosionPrefab: {fileID: 5699366482873925111, guid: 686f49e9e29ad094f9039d501897f1df, type: 3}
   _shieldHealth: 0
   _shieldBreakingSFX: {fileID: 8300000, guid: 0f8ee8b7c1de70c4dbfa131350c1dd49, type: 3}

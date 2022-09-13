@@ -21,13 +21,12 @@ public class Player : MonoBehaviour
 
     float _holdTimer;
 
-    [SerializeField]
-    int _ammoCount = 15;
+    public int _ammoCount = 15;
 
-    [SerializeField]
     bool _isTripleShot;
 
-    [SerializeField]
+    bool _isHomingLaser;
+
     bool _isSpeedUp;
 
     bool _isBoosterOn;
@@ -39,7 +38,7 @@ public class Player : MonoBehaviour
     public GameObject shield;
 
     [SerializeField]
-    GameObject _laser;
+    GameObject _laser, _homingLaser;
 
     [SerializeField]
     GameObject _tripleShot;
@@ -133,19 +132,31 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
         {
             FireLaser();
+
+        }
+
+        if (Input.GetKeyDown(KeyCode.H) && Time.time >= _canFire)
+        {
+            Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+
         }
 
         Reload();
 
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            
+        }
+
     }
 
-    private void FireLaser()
+    void FireLaser()
     {
         _canFire = Time.time + _fireRate;
 
         if (_ammoCount > 0)
         {
-            if (_isTripleShot == true)
+            if (_isTripleShot)
             {
                 _uImanager.UpdateAmmo(--_ammoCount);
 
@@ -153,6 +164,12 @@ public class Player : MonoBehaviour
 
                 Instantiate(_tripleShot, transform.position, Quaternion.identity);
 
+            }
+            else if (_isHomingLaser)
+            {
+                _audioSource.Play();
+                
+                Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
             }
             else
             {
@@ -165,6 +182,9 @@ public class Player : MonoBehaviour
         }
     }
 
+   
+
+
     void CalculateReloadImage()
     {
         //get the position of the Player in screen space
@@ -176,6 +196,8 @@ public class Player : MonoBehaviour
         //move the reaload image to the position of the corresponding Player's position on the canvas
         _reloadImage.transform.localPosition = _canvasPos; 
     }
+
+
 
     void Reload()
     {
@@ -258,7 +280,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Movement()
+    void Movement()
     {
         // Get input from the user
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -299,7 +321,11 @@ public class Player : MonoBehaviour
 
     public void ActivateTripleShot()
     {
-        StartCoroutine(TripleShotPoweup());
+        if (!_isHomingLaser)
+        {
+            StartCoroutine(TripleShotPoweup());
+        }
+        
     }
 
     IEnumerator TripleShotPoweup()
@@ -373,6 +399,24 @@ public class Player : MonoBehaviour
     public void StopMoving()
     {
         _moveSpeed = 0;
+    }
+
+    public void ActivateHomingLaser()
+    {
+        if (!_isTripleShot)
+        {
+            StartCoroutine(HomingLaserPoweup());
+        }
+        
+    }
+
+    IEnumerator HomingLaserPoweup()
+    {
+        _isHomingLaser = true;
+
+        yield return new WaitForSeconds(5f);
+
+        _isHomingLaser = false;
     }
 
     void Ignition()

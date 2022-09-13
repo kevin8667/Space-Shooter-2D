@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
 
     Animator _anim;
 
-    bool _isDestroyed;
+    public bool isDestroyed;
 
     [SerializeField]
     AudioClip _explosionSFX;
@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-        if (transform.position.y < -5f && !_isDestroyed)
+        if (transform.position.y < -5f && !isDestroyed)
         {
             transform.position = new Vector3(Random.Range(-8f, 8f), 7f, 0);
         }
@@ -73,7 +73,7 @@ public class Enemy : MonoBehaviour
 
             GetComponent<Collider2D>().enabled = false;
 
-            _isDestroyed = true;
+            isDestroyed = true;
 
             Destroy(gameObject, 2.7f);
 
@@ -92,7 +92,7 @@ public class Enemy : MonoBehaviour
 
             _gameManager.AddScore(_scoreIncrement);
 
-            _isDestroyed = true;
+            isDestroyed = true;
 
             Destroy(gameObject, 2.7f);
 

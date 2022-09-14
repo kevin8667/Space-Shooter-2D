@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public bool isGameOVer;
 
     [SerializeField]
-    UIManager _UIManager;
+    UIManager _uIManager;
 
     // Start is called before the first frame update
     void Start()
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
     public void AddScore(int addValue)
     {
         score += addValue;
-        _UIManager.UpdateScore();
+        _uIManager.UpdateScore();
     }
 
     public void LoadMainMenu(string sceneName)
@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void TogglePause()
     {
-        _UIManager.TogglePauseMenu();
+        _uIManager.TogglePauseMenu();
 
         if(Time.timeScale == 1)
         {

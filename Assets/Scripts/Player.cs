@@ -21,6 +21,11 @@ public class Player : MonoBehaviour
 
     float _holdTimer;
 
+    [SerializeField]
+    float _fuelTime = 10f;
+
+    float _thrusterTimer;
+
     public int _ammoCount = 15;
 
     bool _isTripleShot;
@@ -31,7 +36,7 @@ public class Player : MonoBehaviour
 
     bool _isBoosterOn;
 
-    bool _isReloading;
+    bool _isReloading, _isOutOfFuel;
 
     public bool isShielded;
 
@@ -46,7 +51,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameObject _thruster;
 
-    Image _reloadImage;
+    Image _reloadImage, _fuelImage;
 
     RectTransform _canvasRect;
 
@@ -72,13 +77,17 @@ public class Player : MonoBehaviour
 
         _holdTimer = _reloadTime;
 
+        _thrusterTimer = _fuelTime;
+
         _audioSource = gameObject.GetComponent<AudioSource>();
 
         _playHealth = gameObject.GetComponent<PlayerHealth>();
 
         _uImanager = GameObject.Find("UIManager").GetComponent<UIManager>();
 
-        _reloadImage = GameObject.Find("ReloadImage").GetComponent<Image>();
+        _reloadImage = _uImanager.ReloadImage;
+
+        _fuelImage = _uImanager.FuelImage;
 
         _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
 
@@ -115,6 +124,16 @@ public class Player : MonoBehaviour
             _reloadImage.gameObject.SetActive(false);
         }
 
+        if(_fuelImage == null)
+        {
+            Debug.LogError("The Fuel Image is NULL!");
+
+        }
+        else
+        {
+            _fuelImage.fillAmount = 1;
+        }
+
         if (_canvasRect == null)
         {
             Debug.LogError("The Canvas is NULL!");
@@ -129,6 +148,10 @@ public class Player : MonoBehaviour
 
         Movement();
 
+        Reload();
+
+        ChangeFuelAmount(_isBoosterOn);
+
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
         {
             FireLaser();
@@ -139,13 +162,6 @@ public class Player : MonoBehaviour
         {
             Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
 
-        }
-
-        Reload();
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            
         }
 
     }
@@ -182,9 +198,6 @@ public class Player : MonoBehaviour
         }
     }
 
-   
-
-
     void CalculateReloadImage()
     {
         //get the position of the Player in screen space
@@ -196,8 +209,6 @@ public class Player : MonoBehaviour
         //move the reaload image to the position of the corresponding Player's position on the canvas
         _reloadImage.transform.localPosition = _canvasPos; 
     }
-
-
 
     void Reload()
     {
@@ -218,7 +229,9 @@ public class Player : MonoBehaviour
 
                 _holdTimer -= Time.deltaTime;
 
-                _reloadImage.fillAmount = 1f - _holdTimer / _reloadTime;
+                _uImanager.UpdateImageFillAmount(_reloadImage, 1f - _holdTimer / _reloadTime);
+
+                //_reloadImage.fillAmount = 1f - _holdTimer / _reloadTime;
             }
 
             if (_holdTimer <= 0 && _ammoCount < 15)
@@ -236,7 +249,7 @@ public class Player : MonoBehaviour
 
             _reloadImage.gameObject.SetActive(false);
 
-            _reloadImage.fillAmount = 0;
+            _uImanager.UpdateImageFillAmount(_reloadImage, 0);
 
             _holdTimer = _reloadTime;
         }
@@ -248,36 +261,24 @@ public class Player : MonoBehaviour
     {
         _ammoCount += 5;
 
+        AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
+
         if (_ammoCount > 15)
         {
-            AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
-
             _ammoCount = 15;
-
-            _moveSpeed /= 0.5f;
-
-            _isReloading = false;
-
-            _holdTimer = _reloadTime;
-
-            _reloadImage.fillAmount = 0;
-
-            _uImanager.UpdateAmmo(_ammoCount);
         }
-        else
-        {
-            AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
 
-            _moveSpeed /= 0.5f;
+        _moveSpeed /= 0.5f;
 
-            _isReloading = false;
+        _isReloading = false;
 
-            _holdTimer = _reloadTime;
+        _holdTimer = _reloadTime;
 
-            _reloadImage.fillAmount = 0;
+        _uImanager.UpdateImageFillAmount(_reloadImage, 0);
 
-            _uImanager.UpdateAmmo(_ammoCount);
-        }
+        _uImanager.UpdateAmmo(_ammoCount);
+
+        
     }
 
     void Movement()
@@ -349,6 +350,7 @@ public class Player : MonoBehaviour
     {
 
         _moveSpeed *= _speedMultiplier;
+
         _isSpeedUp = true;
 
         if (_isBoosterOn)
@@ -421,8 +423,10 @@ public class Player : MonoBehaviour
 
     void Ignition()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isOutOfFuel)
         {
+
             _isBoosterOn = true;
 
             if (_isSpeedUp)
@@ -435,7 +439,7 @@ public class Player : MonoBehaviour
             }
 
         }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || _thrusterTimer <=0)
         {
             _isBoosterOn = false;
 
@@ -455,14 +459,52 @@ public class Player : MonoBehaviour
     {
         if (isBoost)
         {
-            _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y - .75f, _thruster.transform.position.z);
-            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y + .5f, _thruster.transform.localScale.z);
+            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -4.25f, _thruster.transform.localPosition.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1.5f, _thruster.transform.localScale.z);
+
         }
         else
         {
-            _thruster.transform.position = new Vector3(_thruster.transform.position.x, _thruster.transform.position.y + .75f, _thruster.transform.position.z);
-            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, _thruster.transform.localScale.y - .5f, _thruster.transform.localScale.z);
+            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -3.5f, _thruster.transform.localPosition.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1f, _thruster.transform.localScale.z);
         }   
+    }
+
+    void ChangeFuelAmount(bool isBoosting)
+    {
+        
+        if (isBoosting && _thrusterTimer > 0)
+        {
+            _thrusterTimer -= Time.deltaTime;
+
+            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
+           
+        }
+        else if(!isBoosting && _thrusterTimer <= _fuelTime)
+        {
+            _thrusterTimer += Time.deltaTime;
+
+            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
+        }
+
+        if (_thrusterTimer <= 0)
+        {
+            _isOutOfFuel = true;
+
+            _uImanager.StartImageFlicker(_fuelImage, 0.2f, _isOutOfFuel);
+
+        }else if (_thrusterTimer >= _fuelTime && _isOutOfFuel)
+        {
+            _thrusterTimer = _fuelTime;
+
+            _isOutOfFuel = false;
+
+            _uImanager.StoprImageFlicker();
+
+            _fuelImage.enabled = true;
+
+        }
+
     }
 
 }

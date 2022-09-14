@@ -21,10 +21,17 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     TMP_Text _gameOverText, _gameOverTips;
 
-
     [SerializeField]
     GameObject _pauseMenu;
-   
+
+    [SerializeField]
+    Image reloadImage, fuelImage;
+
+    public Image ReloadImage => reloadImage;
+
+    public Image FuelImage => fuelImage;
+
+    Coroutine _coroutine;
 
     // Start is called before the first frame update
     void Start()
@@ -60,4 +67,38 @@ public class UIManager : MonoBehaviour
     {
         _pauseMenu.SetActive(!_pauseMenu.activeInHierarchy);
     }
+
+    public void UpdateImageFillAmount(Image image, float ratio)
+    {
+        image.fillAmount = ratio;
+    }
+
+    public void StartImageFlicker(Image image, float interval, bool trigger)
+    {
+        _coroutine = StartCoroutine(ImageFlicker(image, interval, trigger));
+    }
+
+    public void StoprImageFlicker()
+    {
+        StopCoroutine(_coroutine);
+    }
+
+    IEnumerator ImageFlicker(Image image, float interval, bool trigger) 
+    {
+        while (trigger)
+        {
+            image.enabled = false;
+
+            yield return new WaitForSeconds(interval);
+
+            image.enabled = true;
+
+            yield return new WaitForSeconds(interval);
+
+            image.enabled = false;
+
+        }
+
+    }
+
 }

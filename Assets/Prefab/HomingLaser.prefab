@@ -137,7 +137,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
-  _rotateSpeed: 200
+  _rotateSpeed: 750
+  _duration: 3
   _isHomingLaser: 1
 --- !u!96 &4622677527449273754
 TrailRenderer:
@@ -181,7 +182,7 @@ TrailRenderer:
   m_SortingLayerID: -1085714633
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Time: 3
+  m_Time: 2
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1

@@ -12,10 +12,15 @@ public class Laser : MonoBehaviour
     float _rotateSpeed = 200f;
 
     [SerializeField]
+    float _duration = 2.5f;
+
+    [SerializeField]
     bool _isHomingLaser;
 
+    [SerializeField]
     List<GameObject> _targets;
 
+    [SerializeField]
     Transform _transformMin;
 
     Rigidbody2D _ridigBody2D;
@@ -59,15 +64,16 @@ public class Laser : MonoBehaviour
     {
         if (_isHomingLaser)
         {
+            if (_transformMin == null)
+            {
+                FindNearestTraget();
 
-            FindNearestTraget();
+            }
 
             ChaseTarget();
         }
        
     }
-
-   
 
 
     void FindNearestTraget()
@@ -93,6 +99,7 @@ public class Laser : MonoBehaviour
             if (t != null)
             {
                 _distanceToTarget = Vector2.Distance(t.GetComponent<Transform>().position, _currentPos);
+
                 if (_distanceToTarget < _minDistance)
                 {
                     _transformMin = t.GetComponent<Transform>();
@@ -102,11 +109,13 @@ public class Laser : MonoBehaviour
             }
         }
     }
+    
 
     void ChaseTarget()
     {
         if (_transformMin != null && !_transformMin.GetComponent<Enemy>().isDestroyed)
         {
+
             Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
 
             direction.Normalize();
@@ -117,7 +126,28 @@ public class Laser : MonoBehaviour
 
             _ridigBody2D.velocity = transform.up * _speed;
 
-            Destroy(gameObject, 8f);
+            Destroy(gameObject, _duration);
+
+
+        }else if (_transformMin != null && _transformMin.GetComponent<Enemy>().isDestroyed)
+        {
+
+            _minDistance = Mathf.Infinity;
+
+
+            FindNearestTraget();
+
+            Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
+
+            direction.Normalize();
+
+            float rotateAmount = Vector3.Cross(direction, transform.up).z;
+
+            _ridigBody2D.angularVelocity = -rotateAmount * _rotateSpeed;
+
+            _ridigBody2D.velocity = transform.up * _speed;
+
+            Destroy(gameObject, _duration);
         }
 
     }

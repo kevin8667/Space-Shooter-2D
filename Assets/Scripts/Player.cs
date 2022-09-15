@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+
+    #region"Numbers"
     [SerializeField]
     float _moveSpeed;
 
@@ -28,6 +30,10 @@ public class Player : MonoBehaviour
 
     public int _ammoCount = 15;
 
+    #endregion
+
+    #region"Triggers and Switches"
+
     bool _isTripleShot;
 
     bool _isHomingLaser;
@@ -40,6 +46,9 @@ public class Player : MonoBehaviour
 
     public bool isShielded;
 
+    #endregion
+
+    #region"Object References"
     public GameObject shield;
 
     [SerializeField]
@@ -64,9 +73,14 @@ public class Player : MonoBehaviour
 
     UIManager _uImanager;
 
+    #endregion
+
+    #region"Transform Data"
     Vector2 _screenPoint;
 
     Vector2 _canvasPos;
+
+    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -155,12 +169,6 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
         {
             FireLaser();
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.H) && Time.time >= _canFire)
-        {
-            Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
 
         }
 

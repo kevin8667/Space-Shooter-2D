@@ -134,7 +134,6 @@ public class Laser : MonoBehaviour
 
             _minDistance = Mathf.Infinity;
 
-
             FindNearestTraget();
 
             Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;

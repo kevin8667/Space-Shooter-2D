@@ -7,16 +7,18 @@ public class PlayerHealth : MonoBehaviour
 
     public int health = 3;
 
+    public int _shieldHealth = 0;
+
     Player _player;
 
     UIManager _uIManager;
 
     GameManager _gameManager;
 
+    CameraManager _cameraManager;
+
     [SerializeField]
     GameObject _newExplosionPrefab;
-
-    public int _shieldHealth = 0;
 
     Color _shieldColor;
 
@@ -30,6 +32,8 @@ public class PlayerHealth : MonoBehaviour
         _uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
 
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        _cameraManager = GameObject.Find("Main Camera").GetComponent<CameraManager>();
 
         _shieldColor = _player.shield.GetComponent<SpriteRenderer>().color;
 
@@ -63,6 +67,8 @@ public class PlayerHealth : MonoBehaviour
         health--;
 
         _uIManager.UpadateLives(health);
+
+        _cameraManager.CamaraShake();
 
         if (health < 1)
         {

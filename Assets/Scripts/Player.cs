@@ -7,28 +7,28 @@ public class Player : MonoBehaviour
 {
 
     #region"Numbers"
+
+    [Header("Movement Settings")]
     [SerializeField]
     float _moveSpeed;
-
     [SerializeField]
     float _speedMultiplier = 2f;
 
+
+    [Header("Weappon Settings")]
     [SerializeField]
     float _fireRate = 0.3f;
-    
     float _canFire = 0f;
-
+    public int maxAmmo = 15;
+    public int ammoCount;
     [SerializeField]
     float _reloadTime = 3f;
-
     float _holdTimer;
 
+    [Header("Thruster Settings")]
     [SerializeField]
     float _fuelTime = 10f;
-
     float _thrusterTimer;
-
-    public int _ammoCount = 15;
 
     #endregion
 
@@ -44,6 +44,7 @@ public class Player : MonoBehaviour
 
     bool _isReloading, _isOutOfFuel;
 
+    [HideInInspector]
     public bool isShielded;
 
     #endregion
@@ -51,22 +52,23 @@ public class Player : MonoBehaviour
     #region"Object References"
     public GameObject shield;
 
+    [Header("Weappon Preafabs")]
     [SerializeField]
     GameObject _laser, _homingLaser;
-
     [SerializeField]
     GameObject _tripleShot;
 
+    [Header("Thruster Preafabs")]
     [SerializeField]
     GameObject _thruster;
 
-    Image _reloadImage, _fuelImage;
 
+    Image _reloadImage, _fuelImage;
     RectTransform _canvasRect;
 
+    [Header("Sounds")]
     [SerializeField]
     AudioClip _laserSFX, _reloadSFX;
-
     AudioSource _audioSource;
 
     PlayerHealth _playHealth;
@@ -88,6 +90,8 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, 0, 0);
 
         _moveSpeed = 5f;
+
+        ammoCount = maxAmmo;
 
         _holdTimer = _reloadTime;
 
@@ -125,7 +129,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            _uImanager.UpdateAmmo(_ammoCount);
+            _uImanager.UpdateAmmo(ammoCount);
         }
 
         if (_reloadImage == null)
@@ -178,26 +182,29 @@ public class Player : MonoBehaviour
     {
         _canFire = Time.time + _fireRate;
 
-        if (_ammoCount > 0)
+        if (_isHomingLaser)
+        {
+            _audioSource.Play();
+
+            Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+
+            return;
+        }
+
+        if (ammoCount > 0)
         {
             if (_isTripleShot)
             {
-                _uImanager.UpdateAmmo(--_ammoCount);
+                _uImanager.UpdateAmmo(--ammoCount);
 
                 _audioSource.Play();
 
                 Instantiate(_tripleShot, transform.position, Quaternion.identity);
 
             }
-            else if (_isHomingLaser)
-            {
-                _audioSource.Play();
-                
-                Instantiate(_homingLaser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
-            }
             else
             {
-                _uImanager.UpdateAmmo(--_ammoCount);
+                _uImanager.UpdateAmmo(--ammoCount);
 
                 _audioSource.Play();
 
@@ -223,7 +230,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.R))
         {
-            if(_ammoCount < 15)
+            if(ammoCount < maxAmmo)
             {
                 if (!_isReloading)
                 {
@@ -242,7 +249,7 @@ public class Player : MonoBehaviour
                 //_reloadImage.fillAmount = 1f - _holdTimer / _reloadTime;
             }
 
-            if (_holdTimer <= 0 && _ammoCount < 15)
+            if (_holdTimer <= 0 && ammoCount < 15)
             {  
                 FinishingReload();
             }
@@ -267,13 +274,13 @@ public class Player : MonoBehaviour
 
     void FinishingReload()
     {
-        _ammoCount += 5;
+        ammoCount += 5;
 
         AudioSource.PlayClipAtPoint(_reloadSFX, GameObject.Find("Main Camera").transform.position, 0.4f);
 
-        if (_ammoCount > 15)
+        if (ammoCount > maxAmmo)
         {
-            _ammoCount = 15;
+            ammoCount = maxAmmo;
         }
 
         _moveSpeed /= 0.5f;
@@ -284,7 +291,7 @@ public class Player : MonoBehaviour
 
         _uImanager.UpdateImageFillAmount(_reloadImage, 0);
 
-        _uImanager.UpdateAmmo(_ammoCount);
+        _uImanager.UpdateAmmo(ammoCount);
 
         
     }
@@ -389,7 +396,7 @@ public class Player : MonoBehaviour
 
     public void ActivateShield()
     {
-        switch (_playHealth._shieldHealth)
+        switch (_playHealth.shieldHealth)
         {
             case 2:
                 _playHealth.ShieldRecover();
@@ -398,7 +405,7 @@ public class Player : MonoBehaviour
                 _playHealth.ShieldRecover();
                 break;
             case 0:
-                _playHealth._shieldHealth = 3;
+                _playHealth.shieldHealth = 3;
                 _playHealth.SetShield();
                 isShielded = true;
                 shield.SetActive(true);

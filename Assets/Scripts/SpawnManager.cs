@@ -7,11 +7,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     GameObject _enemyPrefab;
 
-    GameObject _player;
-
     [SerializeField]
     GameObject[] _powerups;
 
+    GameObject _player;
 
     // Start is called before the first frame update
     void Start()
@@ -26,18 +25,59 @@ public class SpawnManager : MonoBehaviour
         
     }
 
+
     IEnumerator SpawnRoutine()
     {
         while (_player != null)
         {
-            Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
+            float rand = Random.value;
 
-            GameObject newEnemy = Instantiate(_enemyPrefab, spawningPos, Quaternion.identity);
+            GameObject newEnemy = Instantiate(_enemyPrefab, gameObject.transform.position, Quaternion.identity);
 
-            newEnemy.transform.parent = gameObject.transform;
+            Enemy enemyData = newEnemy.GetComponent<Enemy>();
 
-            yield return new WaitForSeconds(3f);
+            if (rand < 0.5f)
+            {
+                enemyData.movementType = Enemy.MovementType.UpToBottom;
+
+                SetEnemy(newEnemy, enemyData);
+
+                yield return new WaitForSeconds(3f);
+            }
+            
+            if(rand > 0.5f)
+            {
+                float rand2 = Random.Range(rand, 1f);
+
+                if (rand2 > 0.75f)
+                {
+                    enemyData.movementType = Enemy.MovementType.LeftToRight;
+
+                    SetEnemy(newEnemy, enemyData);
+
+                    yield return new WaitForSeconds(3f);
+                }
+                else if (rand2 < 0.75f)
+                {
+                    enemyData.movementType = Enemy.MovementType.RightToLeft;
+
+                    SetEnemy(newEnemy, enemyData);
+
+                    yield return new WaitForSeconds(3f);
+                }
+
+            }
         }
+    }
+
+
+    void SetEnemy(GameObject newEnemy, Enemy enemyData)
+    {
+        newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
+
+        newEnemy.transform.position = enemyData.movementAttrDic[enemyData.movementType].startPoint;
+
+        newEnemy.transform.parent = gameObject.transform;
     }
 
     IEnumerator SpawanPowerupsRoutine()
@@ -46,9 +86,22 @@ public class SpawnManager : MonoBehaviour
         {
             Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
 
-            Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
+            float rand = Random.value;
 
-            yield return new WaitForSeconds(Random.Range(3f, 7f));
+            if (rand < 0.7f)
+            {
+                Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
+
+                yield return new WaitForSeconds(Random.Range(3f, 7f));
+
+            }
+            if(rand < 0.3f)
+            {
+                Instantiate(_powerups[Random.Range(3, 5)], spawningPos, Quaternion.identity);
+
+                yield return new WaitForSeconds(Random.Range(3f, 7f));
+            }
+
         }
     }
 }

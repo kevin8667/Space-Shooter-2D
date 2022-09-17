@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2068606688433127638}
   - component: {fileID: 3067028442976523744}
   m_Layer: 0
-  m_Name: AmmoCrate
+  m_Name: Powerup_HomingLaser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

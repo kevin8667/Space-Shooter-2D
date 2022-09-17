@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
 
     public int health = 3;
 
-    public int _shieldHealth = 0;
+    public int shieldHealth = 0;
 
     Player _player;
 
@@ -88,9 +88,9 @@ public class PlayerHealth : MonoBehaviour
 
     void ShieldDamage()
     {
-        if (_shieldHealth > 0)
+        if (shieldHealth > 0)
         {
-            _shieldHealth -= 1;
+            shieldHealth -= 1;
 
             SetShield();
         }
@@ -100,9 +100,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void ShieldRecover()
     {
-        if (_shieldHealth < 3)
+        if (shieldHealth < 3)
         {
-            _shieldHealth += 1;
+            shieldHealth += 1;
 
             SetShield();
         }
@@ -110,7 +110,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void SetShield()
     {
-        switch (_shieldHealth)
+        switch (shieldHealth)
         {
             case 3:
                 _player.shield.GetComponent<SpriteRenderer>().color = Color.white;

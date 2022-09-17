@@ -51,6 +51,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 4.5
   _scoreIncrement: 10
+  _movementAttr:
+  - movementType: 0
+    startPoint: {x: 0, y: 7}
+    randomRangeMin: -8
+    randomRangeMax: 8
+    moveDistance: 15
+    rotation: 0
+  - movementType: 1
+    startPoint: {x: -11, y: 0}
+    randomRangeMin: -4
+    randomRangeMax: 2
+    moveDistance: 22
+    rotation: 90
+  - movementType: 2
+    startPoint: {x: 11, y: 0}
+    randomRangeMin: -4
+    randomRangeMax: 2
+    moveDistance: 22
+    rotation: 270
+  movementType: 0
+  isDestroyed: 0
   _explosionSFX: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
 --- !u!212 &4629288733340139875
 SpriteRenderer:

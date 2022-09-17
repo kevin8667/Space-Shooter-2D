@@ -159,8 +159,9 @@ MonoBehaviour:
   _speedMultiplier: 2
   _fireRate: 0.15
   _reloadTime: 3
-  _fuelTime: 1
-  _ammoCount: 15
+  _fuelTime: 3
+  maxAmmo: 15
+  ammoCount: 0
   isShielded: 0
   shield: {fileID: 8929206222285230687}
   _laser: {fileID: 1778460645259023981, guid: 0dc5a87477dedf74bbf8d539b2f34503, type: 3}
@@ -182,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 3
-  _shieldHealth: 0
+  shieldHealth: 0
   _newExplosionPrefab: {fileID: 5699366482873925111, guid: 686f49e9e29ad094f9039d501897f1df, type: 3}
   _shieldBreakingSFX: {fileID: 8300000, guid: 0f8ee8b7c1de70c4dbfa131350c1dd49, type: 3}
 --- !u!212 &4215944491426162154

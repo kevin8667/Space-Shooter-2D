@@ -31,14 +31,15 @@ public class UIManager : MonoBehaviour
 
     public Image FuelImage => fuelImage;
 
+    [SerializeField]
+    Player _player;
+
     Coroutine _coroutine;
 
     // Start is called before the first frame update
     void Start()
     {
         _score.text = "Score: " + _gameManager.score;
-
-        //_lifeIndicator.sprite = _lifeSprites[3];
     }
 
     public void UpdateScore()
@@ -48,7 +49,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int ammo)
     {
-        _ammo.text = "Ammo: " + ammo;
+        _ammo.text = "Ammo: " + ammo + "/" + _player.maxAmmo;
     }
 
     public void UpadateLives(int playerLives)

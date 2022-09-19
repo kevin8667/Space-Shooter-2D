@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Drawing;
 
 public class Enemy : MonoBehaviour
 {
@@ -13,12 +14,13 @@ public class Enemy : MonoBehaviour
 
     };
 
+    [HideInInspector]
+    public bool isShielded;
 
     [SerializeField]
-    float _speed = 4.5f;
+    GameObject _shield;
 
-    [SerializeField]
-    int _scoreIncrement = 10;
+    public float speed = 4.5f;
 
     [System.Serializable]
     public struct MovementAttributes
@@ -40,17 +42,10 @@ public class Enemy : MonoBehaviour
 
     public IDictionary<MovementType, MovementAttributes> movementAttrDic;
 
-    GameManager _gameManager;
-
-    Animator _anim;
-
     [HideInInspector]
     public bool isDestroyed;
 
-    [SerializeField]
-    AudioClip _explosionSFX;
-
-    AudioSource _audioSource;
+    EnemyHealth _enemyHealth;
 
      void Awake()
     {
@@ -82,20 +77,12 @@ public class Enemy : MonoBehaviour
 
         startPos = transform.position;
 
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
-        _anim = GetComponent<Animator>();
-
-        _audioSource = GetComponent<AudioSource>();
-
-        if(_audioSource == null)
+        if (isShielded)
         {
-            Debug.LogError("The Audio Source is NULL!");
+            _shield.SetActive(true);
         }
-        else
-        {
-            _audioSource.clip = _explosionSFX;
-        }
+        _enemyHealth = GetComponent<EnemyHealth>();
+
 
     }
 
@@ -109,7 +96,7 @@ public class Enemy : MonoBehaviour
 
     private void MoveEnemy()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        transform.Translate(Vector3.down * speed * Time.deltaTime);
 
         float distance = Vector2.Distance(transform.position, startPos);
 
@@ -129,78 +116,72 @@ public class Enemy : MonoBehaviour
 
     void ResetPosition()
     {
-        RandomizeStartPoint();
-
-        transform.position = movementAttrDic[movementType].startPoint;
-
+        transform.position = RandomizeStartPoint();
         startPos = transform.position;
     }
 
-    void RandomizeStartPoint()
+    Vector2  RandomizeStartPoint()
     {
-        for (int i = 0; i < _movementAttr.Length; i++)
+        Vector2 point = new Vector2(0, 0);
+        switch (movementType)
         {
-            switch (i)
-            {
-                case 0:
-                    _movementAttr[i].startPoint = new Vector2(Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax), _movementAttr[i].startPoint.y);
-                    break;
-                case 1:
-                    _movementAttr[i].startPoint = new Vector2(_movementAttr[i].startPoint.x, Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax));
-                    break;
-                case 2:
-                    _movementAttr[i].startPoint = new Vector2(_movementAttr[i].startPoint.x, Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax));
-                    break;
-            }
+            case MovementType.UpToBottom:
+                point = new Vector2(Random.Range(movementAttrDic[movementType].randomRangeMin, movementAttrDic[movementType].randomRangeMax), movementAttrDic[movementType].startPoint.y);
+                break;
+            case MovementType.LeftToRight: case MovementType.RightToLeft:
+                point = new Vector2(movementAttrDic[movementType].startPoint.x, Random.Range(movementAttrDic[movementType].randomRangeMin, movementAttrDic[movementType].randomRangeMax));
+                break;
         }
+        return point;
+
+    }
+    
+
+    public void ToggleShield()
+    {
+        _shield.SetActive(isShielded);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
-
             PlayerHealth playerHealth = other.gameObject.GetComponent<PlayerHealth>();
 
-            if(playerHealth != null)
+            if (playerHealth != null)
             {
                 playerHealth.Damage();
             }
 
-            _anim.SetTrigger("OnEnemyDestroy");
+            if (isShielded)
+            {
+                isShielded = false;
+                _enemyHealth.PlayShieldBreakingSFX();
+                ToggleShield();
+                return;
+            }
 
-            _audioSource.Play();
-
-            GetComponent<Collider2D>().enabled = false;
-
-            isDestroyed = true;
-
-            Destroy(gameObject, 2.7f);
-
+            _enemyHealth.Damage();
 
         }
         else if (other.tag == "Laser")
         {
 
+            if (isShielded)
+            {
+                isShielded = false;
+                _enemyHealth.PlayShieldBreakingSFX();
+                ToggleShield();
+                Destroy(other.gameObject);
+                return;
+            }
+
             Destroy(other.gameObject);
 
-            _anim.SetTrigger("OnEnemyDestroy");
-
-            _audioSource.Play();
-
-            GetComponent<Collider2D>().enabled = false;
-
-            _gameManager.AddScore(_scoreIncrement);
-
-            isDestroyed = true;
-
-            Destroy(gameObject, 2.7f);
+            _enemyHealth.Damage();
 
         }
-
     }
 
-
-
+    
 }

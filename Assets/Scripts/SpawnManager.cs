@@ -78,6 +78,13 @@ public class SpawnManager : MonoBehaviour
         newEnemy.transform.position = enemyData.movementAttrDic[enemyData.movementType].startPoint;
 
         newEnemy.transform.parent = gameObject.transform;
+
+        float rand = Random.value;
+
+        if(rand < 0.3f)
+        {
+            enemyData.isShielded = true;
+        }
     }
 
     IEnumerator SpawanPowerupsRoutine()

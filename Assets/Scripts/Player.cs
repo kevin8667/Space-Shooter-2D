@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     float _speedMultiplier = 2f;
 
 
-    [Header("Weappon Settings")]
+    [Header("Weapon Settings")]
     [SerializeField]
     float _fireRate = 0.3f;
     float _canFire = 0f;
@@ -24,6 +24,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     float _reloadTime = 3f;
     float _holdTimer;
+    [SerializeField]
+    int _bombCount = 3;
 
     [Header("Thruster Settings")]
     [SerializeField]
@@ -44,21 +46,28 @@ public class Player : MonoBehaviour
 
     bool _isReloading, _isOutOfFuel;
 
+    bool _isBombing;
+
     [HideInInspector]
     public bool isShielded;
 
     #endregion
 
     #region"Object References"
+    [Header("Shield Prefab")]
     public GameObject shield;
 
-    [Header("Weappon Preafabs")]
+    [Header("Weapon Prefabs")]
     [SerializeField]
-    GameObject _laser, _homingLaser;
+    GameObject _laser;
+    [SerializeField]
+    GameObject _homingLaser;
     [SerializeField]
     GameObject _tripleShot;
+    [SerializeField]
+    GameObject _bomb;
 
-    [Header("Thruster Preafabs")]
+    [Header("Thruster Prefab")]
     [SerializeField]
     GameObject _thruster;
 
@@ -77,12 +86,6 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    #region"Transform Data"
-    Vector2 _screenPoint;
-
-    Vector2 _canvasPos;
-
-    #endregion
 
     // Start is called before the first frame update
     void Start()
@@ -176,6 +179,18 @@ public class Player : MonoBehaviour
 
         }
 
+        if (FindObjectOfType<Bomb>() == null)
+        {
+            _isBombing = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.H) && !_isBombing)
+        {
+            DeployBomb();
+        }
+
+       
+
     }
 
     void FireLaser()
@@ -213,16 +228,20 @@ public class Player : MonoBehaviour
         }
     }
 
-    void CalculateReloadImage()
+    
+
+
+    void DeployBomb()
     {
-        //get the position of the Player in screen space
-        _screenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        if(_bombCount > 0 )
+        {
+            _isBombing = true;
 
-        //transfrom the Player's position in screen space to the position in the local space of a RectTransform
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, _screenPoint, null, out _canvasPos);
+            Instantiate(_bomb, new Vector2(0, 0), Quaternion.identity);
 
-        //move the reaload image to the position of the corresponding Player's position on the canvas
-        _reloadImage.transform.localPosition = _canvasPos; 
+            _uImanager.UpdateBombs(--_bombCount);
+
+        }  
     }
 
     void Reload()
@@ -240,7 +259,7 @@ public class Player : MonoBehaviour
 
                 _reloadImage.gameObject.SetActive(true);
 
-                CalculateReloadImage();
+                _uImanager.CalculateReloadImage(transform.position);
 
                 _holdTimer -= Time.deltaTime;
 

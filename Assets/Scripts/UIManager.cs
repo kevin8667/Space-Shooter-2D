@@ -16,6 +16,12 @@ public class UIManager : MonoBehaviour
     Sprite[] _lifeSprites;
 
     [SerializeField]
+    Image _bombIndicator;
+
+    [SerializeField]
+    Sprite[] _bombSprites;
+
+    [SerializeField]
     TMP_Text _score, _ammo;
 
     [SerializeField]
@@ -25,11 +31,16 @@ public class UIManager : MonoBehaviour
     GameObject _pauseMenu;
 
     [SerializeField]
-    Image reloadImage, fuelImage;
+    Image _reloadImage, _fuelImage;
 
-    public Image ReloadImage => reloadImage;
+    [SerializeField]
+    RectTransform _canvasRect;
+    Vector2 _screenPoint;
+    Vector2 _canvasPos;
 
-    public Image FuelImage => fuelImage;
+    public Image ReloadImage => _reloadImage;
+
+    public Image FuelImage => _fuelImage;
 
     [SerializeField]
     Player _player;
@@ -58,6 +69,11 @@ public class UIManager : MonoBehaviour
 
     }
 
+    public void UpdateBombs(int bombCount)
+    {
+        _bombIndicator.sprite = _bombSprites[bombCount];
+    }
+
     public void ShowGameOverUI()
     {
         _gameOverText.gameObject.SetActive(true);
@@ -82,6 +98,18 @@ public class UIManager : MonoBehaviour
     public void StoprImageFlicker()
     {
         StopCoroutine(_coroutine);
+    }
+
+    public void CalculateReloadImage(Vector2 position)
+    {
+        //get the position of the Player in screen space
+        _screenPoint = Camera.main.WorldToScreenPoint(position);
+
+        //transfrom the Player's position in screen space to the position in the local space of a RectTransform
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRect, _screenPoint, null, out _canvasPos);
+
+        //move the reaload image to the position of the corresponding Player's position on the canvas
+        _reloadImage.transform.localPosition = _canvasPos;
     }
 
     IEnumerator ImageFlicker(Image image, float interval, bool trigger) 

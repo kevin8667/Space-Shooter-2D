@@ -48,6 +48,8 @@ public class Player : MonoBehaviour
 
     bool _isBombing;
 
+    bool _isCollecting;
+
     [HideInInspector]
     public bool isShielded;
 
@@ -71,7 +73,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameObject _thruster;
 
-
     Image _reloadImage, _fuelImage;
     RectTransform _canvasRect;
 
@@ -84,6 +85,7 @@ public class Player : MonoBehaviour
 
     UIManager _uImanager;
 
+    List<Powerup> powerups;
     #endregion
 
 
@@ -171,6 +173,16 @@ public class Player : MonoBehaviour
 
         Reload();
 
+        if (Input.GetKeyDown(KeyCode.C))
+        {          
+            _isCollecting = true;            
+        }
+
+        if (_isCollecting)
+        {
+            CollectPowerups();
+        }
+        
         ChangeFuelAmount(_isBoosterOn);
 
         if (Input.GetKeyDown(KeyCode.Space) && Time.time >= _canFire)
@@ -188,8 +200,7 @@ public class Player : MonoBehaviour
         {
             DeployBomb();
         }
-
-       
+  
 
     }
 
@@ -227,8 +238,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-    
 
 
     void DeployBomb()
@@ -315,6 +324,28 @@ public class Player : MonoBehaviour
         
     }
 
+    void CollectPowerups()
+    {
+        powerups = new List<Powerup>();
+
+        foreach (Powerup powerup in FindObjectsOfType<Powerup>())
+        {
+            powerups.Add(powerup);
+        }
+
+        foreach (Powerup powerup in powerups)
+        {
+            powerup.transform.position = Vector2.MoveTowards(powerup.transform.position, transform.position, 10f * Time.deltaTime);
+        }
+
+        if (powerups.Count == 0)
+        {
+            _isCollecting = false;
+        }
+
+    }
+
+    #region"Movement Related Methods"
     void Movement()
     {
         // Get input from the user
@@ -354,6 +385,96 @@ public class Player : MonoBehaviour
         }
     }
 
+    void Ignition()
+    {
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isOutOfFuel)
+        {
+
+            _isBoosterOn = true;
+
+            if (_isSpeedUp)
+            {
+                ToggleBoost(true);
+            }
+            else
+            {
+                _thruster.SetActive(true);
+            }
+
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) || _thrusterTimer <= 0)
+        {
+            _isBoosterOn = false;
+
+            if (_isSpeedUp)
+            {
+                ToggleBoost(false);
+            }
+            else
+            {
+                _thruster.SetActive(false);
+            }
+
+        }
+    }
+
+    void ToggleBoost(bool isBoost)
+    {
+        if (isBoost)
+        {
+            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -4.25f, _thruster.transform.localPosition.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1.5f, _thruster.transform.localScale.z);
+
+        }
+        else
+        {
+            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -3.5f, _thruster.transform.localPosition.z);
+            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1f, _thruster.transform.localScale.z);
+        }
+    }
+
+    void ChangeFuelAmount(bool isBoosting)
+    {
+
+        if (isBoosting && _thrusterTimer > 0)
+        {
+            _thrusterTimer -= Time.deltaTime;
+
+            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
+
+        }
+        else if (!isBoosting && _thrusterTimer <= _fuelTime)
+        {
+            _thrusterTimer += Time.deltaTime;
+
+            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
+        }
+
+        if (_thrusterTimer <= 0)
+        {
+            _isOutOfFuel = true;
+
+            _uImanager.StartImageFlicker(_fuelImage, 0.2f, _isOutOfFuel);
+
+        }
+        else if (_thrusterTimer >= _fuelTime && _isOutOfFuel)
+        {
+            _thrusterTimer = _fuelTime;
+
+            _isOutOfFuel = false;
+
+            _uImanager.StoprImageFlicker();
+
+            _fuelImage.enabled = true;
+
+        }
+
+    }
+    #endregion
+
+
+    #region"Powerups"
     public void ActivateTripleShot()
     {
         if (!_isHomingLaser)
@@ -454,91 +575,8 @@ public class Player : MonoBehaviour
 
         _isHomingLaser = false;
     }
+    #endregion
 
-    void Ignition()
-    {
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isOutOfFuel)
-        {
-
-            _isBoosterOn = true;
-
-            if (_isSpeedUp)
-            {
-                ToggleBoost(true);
-            }
-            else
-            {
-                _thruster.SetActive(true);
-            }
-
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift) || _thrusterTimer <=0)
-        {
-            _isBoosterOn = false;
-
-            if (_isSpeedUp)
-            {
-                ToggleBoost(false);
-            }
-            else
-            {
-                _thruster.SetActive(false);
-            }
-
-        }
-    }
-
-    void ToggleBoost(bool isBoost)
-    {
-        if (isBoost)
-        {
-            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -4.25f, _thruster.transform.localPosition.z);
-            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1.5f, _thruster.transform.localScale.z);
-
-        }
-        else
-        {
-            _thruster.transform.localPosition = new Vector3(_thruster.transform.localPosition.x, -3.5f, _thruster.transform.localPosition.z);
-            _thruster.transform.localScale = new Vector3(_thruster.transform.localScale.x, 1f, _thruster.transform.localScale.z);
-        }   
-    }
-
-    void ChangeFuelAmount(bool isBoosting)
-    {
-        
-        if (isBoosting && _thrusterTimer > 0)
-        {
-            _thrusterTimer -= Time.deltaTime;
-
-            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
-           
-        }
-        else if(!isBoosting && _thrusterTimer <= _fuelTime)
-        {
-            _thrusterTimer += Time.deltaTime;
-
-            _uImanager.UpdateImageFillAmount(_fuelImage, _thrusterTimer / _fuelTime);
-        }
-
-        if (_thrusterTimer <= 0)
-        {
-            _isOutOfFuel = true;
-
-            _uImanager.StartImageFlicker(_fuelImage, 0.2f, _isOutOfFuel);
-
-        }else if (_thrusterTimer >= _fuelTime && _isOutOfFuel)
-        {
-            _thrusterTimer = _fuelTime;
-
-            _isOutOfFuel = false;
-
-            _uImanager.StoprImageFlicker();
-
-            _fuelImage.enabled = true;
-
-        }
-
-    }
+   
 
 }

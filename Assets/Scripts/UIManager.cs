@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Newtonsoft.Json.Linq;
+using System;
 
 public class UIManager : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class UIManager : MonoBehaviour
     Sprite[] _bombSprites;
 
     [SerializeField]
-    TMP_Text _score, _ammo;
+    TMP_Text _score, _ammo, _wave;
 
     [SerializeField]
     TMP_Text _gameOverText, _gameOverTips;
@@ -51,6 +53,8 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         _score.text = "Score: " + _gameManager.score;
+
+        _wave.color = new Color(1, 1, 1, 0);
     }
 
     public void UpdateScore()
@@ -67,6 +71,29 @@ public class UIManager : MonoBehaviour
     {
         _lifeIndicator.sprite = _lifeSprites[playerLives];
 
+    }
+
+    public void UpdateWaveText(int waveNumber)
+    {
+        _wave.color = new Color(1, 1, 1, 1);
+
+        _wave.text = "Wave:" + waveNumber;
+
+        StartCoroutine(WaveTextFadeOut(1f));
+    }
+
+    IEnumerator WaveTextFadeOut(float duration)
+    {
+        Color alpha = _wave.color;
+
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            _wave.color = Color.Lerp(alpha, new Color(1, 1, 1, 0), elapsedTime / duration);
+            yield return null;
+        }
     }
 
     public void UpdateBombs(int bombCount)
@@ -130,4 +157,7 @@ public class UIManager : MonoBehaviour
 
     }
 
+
+
+     
 }

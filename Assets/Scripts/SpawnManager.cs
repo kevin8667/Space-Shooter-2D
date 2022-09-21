@@ -1,38 +1,82 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject _enemyPrefab;
+    int _waveNumber = 3;
+
+    int _currentWave = 0;
+
+    int _enemyNumber = 0;
+
+    public int destroyedEnemyNumber = 0;
+
+    [SerializeField]
+    int[] _enemiesInWaves;
+
+    [SerializeField]
+    GameObject[] _enemyPrefab;
 
     [SerializeField]
     GameObject[] _powerups;
 
     GameObject _player;
 
+    [SerializeField]
+    UIManager _uIManager;
+
     // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player");
 
+        if(_enemiesInWaves.Length > _waveNumber || _enemiesInWaves.Length < _waveNumber)
+        {
+            Debug.LogError("The list length of 'Enemies In Waves should be the same as the wave number!");
+        }
+
         if(_player != null)
         {
+            _uIManager.UpdateWaveText(_currentWave+1);
+
             StartCoroutine(SpawnRoutine());
-            StartCoroutine(SpawanPowerupsRoutine());
+            StartCoroutine(SpawnPowerupsRoutine());
+            StartCoroutine(SpawnExtraPowerupsRoutine());
         }
         
+    }
+
+    void Update()
+    {
+
+        if(destroyedEnemyNumber == _enemiesInWaves[_currentWave] && _currentWave+1 < _waveNumber)
+        {
+            destroyedEnemyNumber = 0;
+
+            StartCoroutine(ResetEnemySpawn());
+        }
+
     }
 
 
     IEnumerator SpawnRoutine()
     {
-        while (_player != null)
+        while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave])
         {
+           
             float rand = Random.value;
 
-            GameObject newEnemy = Instantiate(_enemyPrefab, gameObject.transform.position, Quaternion.identity);
+            int randEnemy = Random.Range(0, _enemyPrefab.Length);
+
+            Debug.Log(randEnemy);
+
+            GameObject newEnemy = Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
+
+            _enemyNumber++;
 
             Enemy enemyData = newEnemy.GetComponent<Enemy>();
 
@@ -44,8 +88,8 @@ public class SpawnManager : MonoBehaviour
 
                 yield return new WaitForSeconds(3f);
             }
-            
-            if(rand > 0.5f)
+
+            if (rand > 0.5f)
             {
                 float rand2 = Random.Range(rand, 1f);
 
@@ -65,9 +109,23 @@ public class SpawnManager : MonoBehaviour
 
                     yield return new WaitForSeconds(3f);
                 }
-
             }
+
         }
+    }
+
+    IEnumerator ResetEnemySpawn()
+    {
+        Debug.Log(_currentWave);
+
+        _currentWave++;
+
+        _uIManager.UpdateWaveText(_currentWave+1);
+
+        yield return new WaitForSeconds(1f);
+
+        _enemyNumber = 0;
+
     }
 
 
@@ -87,7 +145,22 @@ public class SpawnManager : MonoBehaviour
         }
     }
 
-    IEnumerator SpawanPowerupsRoutine()
+    IEnumerator SpawnPowerupsRoutine()
+    {
+        while (_player != null)
+        {
+            Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
+
+            Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
+
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+
+            
+
+        }
+    }
+
+    IEnumerator SpawnExtraPowerupsRoutine()
     {
         while (_player != null)
         {
@@ -95,20 +168,18 @@ public class SpawnManager : MonoBehaviour
 
             float rand = Random.value;
 
-            if (rand < 0.7f)
+            if (rand > 0.5f)
             {
-                Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
-
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
 
             }
-            if(rand < 0.3f)
+            if (rand < 0.5f)
             {
                 Instantiate(_powerups[Random.Range(3, 5)], spawningPos, Quaternion.identity);
 
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
             }
-
         }
+
     }
 }

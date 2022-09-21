@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using System.Drawing;
 
 public class Enemy : MonoBehaviour
 {
@@ -21,6 +19,7 @@ public class Enemy : MonoBehaviour
     GameObject _shield;
 
     public float speed = 4.5f;
+
 
     [System.Serializable]
     public struct MovementAttributes
@@ -47,8 +46,11 @@ public class Enemy : MonoBehaviour
 
     EnemyHealth _enemyHealth;
 
+    
+
      void Awake()
     {
+
         movementAttrDic = new Dictionary<MovementType, MovementAttributes>();
 
         for (int i = 0; i < _movementAttr.Length; i++)
@@ -164,7 +166,7 @@ public class Enemy : MonoBehaviour
             _enemyHealth.Damage();
 
         }
-        else if (other.tag == "Laser")
+        else if (other.tag == "Laser" && !isDestroyed)
         {
 
             if (isShielded)

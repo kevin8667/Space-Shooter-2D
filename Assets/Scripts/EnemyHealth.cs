@@ -15,6 +15,8 @@ public class EnemyHealth : MonoBehaviour
 
     GameManager _gameManager;
 
+    SpawnManager _spawnManager;
+
     [SerializeField]
     AudioClip _explosionSFX, _shieldBreakingSFX;
 
@@ -26,6 +28,8 @@ public class EnemyHealth : MonoBehaviour
         enemy = GetComponent<Enemy>();
 
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
 
         _anim = GetComponent<Animator>();
 
@@ -53,6 +57,8 @@ public class EnemyHealth : MonoBehaviour
         enemy.isDestroyed = true;
 
         _gameManager.AddScore(_scoreIncrement);
+
+        _spawnManager.destroyedEnemyNumber++;
 
         Destroy(gameObject, 2.7f);
     }

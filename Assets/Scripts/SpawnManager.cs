@@ -13,6 +13,7 @@ public class SpawnManager : MonoBehaviour
 
     int _enemyNumber = 0;
 
+    [HideInInspector]
     public int destroyedEnemyNumber = 0;
 
     [SerializeField]
@@ -36,7 +37,7 @@ public class SpawnManager : MonoBehaviour
 
         if(_enemiesInWaves.Length > _waveNumber || _enemiesInWaves.Length < _waveNumber)
         {
-            Debug.LogError("The list length of 'Enemies In Waves should be the same as the wave number!");
+            Debug.LogError("The list length of Enemies In Waves should be the same as the wave number!");
         }
 
         if(_player != null)
@@ -52,11 +53,8 @@ public class SpawnManager : MonoBehaviour
 
     void Update()
     {
-
-        if(destroyedEnemyNumber == _enemiesInWaves[_currentWave] && _currentWave+1 < _waveNumber)
+        if (destroyedEnemyNumber == _enemiesInWaves[_currentWave] && _currentWave+1 < _waveNumber)
         {
-            destroyedEnemyNumber = 0;
-
             StartCoroutine(ResetEnemySpawn());
         }
 
@@ -65,81 +63,98 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnRoutine()
     {
-        while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave])
+        while (true)
         {
-           
-            float rand = Random.value;
+            yield return null;
 
-            int randEnemy = Random.Range(0, _enemyPrefab.Length);
-
-            Debug.Log(randEnemy);
-
-            GameObject newEnemy = Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
-
-            _enemyNumber++;
-
-            Enemy enemyData = newEnemy.GetComponent<Enemy>();
-
-            if (rand < 0.5f)
+            while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave])
             {
-                enemyData.movementType = Enemy.MovementType.UpToBottom;
 
-                SetEnemy(newEnemy, enemyData);
+                float rand = Random.value;
 
-                yield return new WaitForSeconds(3f);
-            }
+                int randEnemy = Random.Range(0, _enemyPrefab.Length);
 
-            if (rand > 0.5f)
-            {
-                float rand2 = Random.Range(rand, 1f);
+                Enemy enemyData = null;
 
-                if (rand2 > 0.75f)
+                GameObject newEnemy = Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
+
+                _enemyNumber++;
+
+                if (newEnemy.GetComponent<Enemy>() != null)
                 {
-                    enemyData.movementType = Enemy.MovementType.LeftToRight;
+                    enemyData = newEnemy.GetComponent<Enemy>();
+                }
+
+                if (rand <= 0.5f)
+                {
+                    enemyData.movementType = Enemy.MovementType.UpToBottom;
 
                     SetEnemy(newEnemy, enemyData);
 
                     yield return new WaitForSeconds(3f);
                 }
-                else if (rand2 < 0.75f)
+
+                if (rand > 0.5f)
                 {
-                    enemyData.movementType = Enemy.MovementType.RightToLeft;
+                    float rand2 = Random.Range(rand, 1f);
 
-                    SetEnemy(newEnemy, enemyData);
+                    if (rand2 > 0.75f)
+                    {
+                        enemyData.movementType = Enemy.MovementType.LeftToRight;
 
-                    yield return new WaitForSeconds(3f);
+                        SetEnemy(newEnemy, enemyData);
+
+                        yield return new WaitForSeconds(3f);
+                    }
+                    else if (rand2 < 0.75f)
+                    {
+                        enemyData.movementType = Enemy.MovementType.RightToLeft;
+
+                        SetEnemy(newEnemy, enemyData);
+
+                        yield return new WaitForSeconds(3f);
+                    }
                 }
-            }
 
+            }
         }
     }
 
     IEnumerator ResetEnemySpawn()
     {
-        Debug.Log(_currentWave);
+        destroyedEnemyNumber = 0;
+
+        Debug.Log("Destyored enemies:" + destroyedEnemyNumber);
 
         _currentWave++;
 
+        Debug.Log("Current wave:" + _currentWave);
+
         _uIManager.UpdateWaveText(_currentWave+1);
 
-        yield return new WaitForSeconds(1f);
-
         _enemyNumber = 0;
+
+        Debug.Log("Enemy number:" + _enemyNumber);
+
+        yield return new WaitForSeconds(1f);
 
     }
 
 
     void SetEnemy(GameObject newEnemy, Enemy enemyData)
     {
-        newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
-
+        if (enemyData.enemyType != Enemy.EnemyType.Gunship)
+        {
+            newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
+        }
+        
         newEnemy.transform.position = enemyData.movementAttrDic[enemyData.movementType].startPoint;
 
         newEnemy.transform.parent = gameObject.transform;
 
         float rand = Random.value;
 
-        if(rand < 0.3f)
+        if(rand <= 0.3f)
         {
             enemyData.isShielded = true;
         }

@@ -17,10 +17,11 @@ public class Laser : MonoBehaviour
     [SerializeField]
     bool _isHomingLaser;
 
-    [SerializeField]
+    [HideInInspector]
+    public bool isEnemyLaser;
+
     List<GameObject> _targets;
 
-    [SerializeField]
     Transform _transformMin;
 
     Rigidbody2D _ridigBody2D;
@@ -44,20 +45,7 @@ public class Laser : MonoBehaviour
 
     void Update()
     {
-        if (!_isHomingLaser)
-        {
-            transform.Translate(Vector3.up * _speed * Time.deltaTime);
-
-            if (transform.position.y > 8f)
-            {
-                if (transform.parent != null)
-                {
-                    Destroy(transform.parent.gameObject);
-                }
-
-                Destroy(gameObject);
-            }
-        }
+        MoveNormalLaser();
     }
 
     void FixedUpdate()
@@ -75,6 +63,35 @@ public class Laser : MonoBehaviour
        
     }
 
+
+    void MoveNormalLaser()
+    {
+        float distance = Vector2.Distance(transform.position, _currentPos);
+
+        if (!_isHomingLaser)
+        {
+            if (isEnemyLaser)
+            {
+                transform.Translate(Vector3.down * _speed * Time.deltaTime);   
+
+            }
+            else
+            {
+                transform.Translate(Vector3.up * _speed * Time.deltaTime);
+            }
+
+
+            if (distance > 10f)
+            {
+                if (transform.parent != null)
+                {
+                    Destroy(transform.parent.gameObject);
+                }
+
+                Destroy(gameObject);
+            }
+        }
+    }
 
     void FindNearestTraget()
     {
@@ -148,7 +165,19 @@ public class Laser : MonoBehaviour
 
             Destroy(gameObject, _duration);
         }
+    }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "Player" && isEnemyLaser == true)
+        {
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+
+            if(playerHealth != null)
+            {
+                playerHealth.Damage();
+            }
+        }
     }
 
 }

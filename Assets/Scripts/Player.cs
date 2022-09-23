@@ -273,8 +273,6 @@ public class Player : MonoBehaviour
                 _holdTimer -= Time.deltaTime;
 
                 _uImanager.UpdateImageFillAmount(_reloadImage, 1f - _holdTimer / _reloadTime);
-
-                //_reloadImage.fillAmount = 1f - _holdTimer / _reloadTime;
             }
 
             if (_holdTimer <= 0 && ammoCount < 15)

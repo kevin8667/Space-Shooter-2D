@@ -20,6 +20,9 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField]
     AudioClip _explosionSFX, _shieldBreakingSFX;
 
+    [SerializeField]
+    GameObject _newExplosionPrefab;
+
     AudioSource _audioSource;
 
     // Start is called before the first frame update
@@ -48,19 +51,38 @@ public class EnemyHealth : MonoBehaviour
 
     public void Damage()
     {
-        _anim.SetTrigger("OnEnemyDestroy");
+        if (enemy.enemyType == Enemy.EnemyType.Gunship)
+        {
+            Instantiate(_newExplosionPrefab, transform.position, Quaternion.identity);
 
-        PlayExplosionSFX();
+            PlayExplosionSFX();
 
-        GetComponent<Collider2D>().enabled = false;
+            GetComponent<Collider2D>().enabled = false;
 
-        enemy.isDestroyed = true;
+            enemy.isDestroyed = true;
 
-        _gameManager.AddScore(_scoreIncrement);
+            _gameManager.AddScore(_scoreIncrement);
 
-        _spawnManager.destroyedEnemyNumber++;
+            _spawnManager.destroyedEnemyNumber++;
 
-        Destroy(gameObject, 2.7f);
+            Destroy(gameObject, 0.3f);
+        }
+        else
+        {
+            _anim.SetTrigger("OnEnemyDestroy");
+
+            PlayExplosionSFX();
+
+            GetComponent<Collider2D>().enabled = false;
+
+            enemy.isDestroyed = true;
+
+            _gameManager.AddScore(_scoreIncrement);
+
+            _spawnManager.destroyedEnemyNumber++;
+
+            Destroy(gameObject, 2.7f);
+        }
     }
 
     public void PlayShieldBreakingSFX()

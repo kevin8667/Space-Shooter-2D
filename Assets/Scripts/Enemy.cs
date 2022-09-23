@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -12,14 +13,18 @@ public class Enemy : MonoBehaviour
 
     };
 
-    [HideInInspector]
-    public bool isShielded;
+    public enum EnemyType
+    {
+        Normal,
+        Gunship
 
-    [SerializeField]
-    GameObject _shield;
+    };
 
+    [Header("Movement Settings")]
     public float speed = 4.5f;
 
+    [SerializeField]
+    public EnemyType enemyType;
 
     [System.Serializable]
     public struct MovementAttributes
@@ -37,6 +42,22 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public MovementType movementType;
 
+    [HideInInspector]
+    public bool isShielded;
+
+    [Header("Weapon Settings")]
+    [SerializeField]
+    float _fireRate = 0.5f;
+    float _canFire = 0f;
+
+    public bool isArmed;
+
+    [SerializeField]
+    GameObject _shield;
+
+    [SerializeField]
+    GameObject _enemyLaser;
+
     Vector2 startPos;
 
     public IDictionary<MovementType, MovementAttributes> movementAttrDic;
@@ -46,11 +67,8 @@ public class Enemy : MonoBehaviour
 
     EnemyHealth _enemyHealth;
 
-    
-
      void Awake()
     {
-
         movementAttrDic = new Dictionary<MovementType, MovementAttributes>();
 
         for (int i = 0; i < _movementAttr.Length; i++)
@@ -94,23 +112,38 @@ public class Enemy : MonoBehaviour
 
         MoveEnemy();
 
+        if(isArmed && Time.time >= _canFire)
+        {
+            FireLaser();
+        }
+
     }
 
-    private void MoveEnemy()
+    void MoveEnemy()
     {
-        transform.Translate(Vector3.down * speed * Time.deltaTime);
+        if (enemyType == EnemyType.Gunship)
+        {
+            switch (movementType)
+            {
+                case MovementType.UpToBottom:
+                    transform.Translate(Vector3.down * speed * Time.deltaTime);
+                    break;
+                case MovementType.LeftToRight:
+                    transform.Translate(Vector3.right * speed * Time.deltaTime);
+                    break;
+                case MovementType.RightToLeft:
+                    transform.Translate(-Vector3.right * speed * Time.deltaTime);
+                    break;
+            }
+        }
+        else
+        {
+            transform.Translate(Vector3.down * speed * Time.deltaTime);
+        }
 
         float distance = Vector2.Distance(transform.position, startPos);
 
-        if (movementType == MovementType.UpToBottom && distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
-        {
-            ResetPosition();
-        }
-        else if (movementType == MovementType.LeftToRight && distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
-        {
-            ResetPosition();
-        }
-        else if (movementType == MovementType.RightToLeft && distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
+        if (distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
         {
             ResetPosition();
         }
@@ -144,6 +177,20 @@ public class Enemy : MonoBehaviour
         _shield.SetActive(isShielded);
     }
 
+    void FireLaser()
+    {
+        _canFire = Time.time + _fireRate;
+
+        GameObject enemyLaser = Instantiate(_enemyLaser, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+
+        Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
+
+        foreach(Laser laser in lasers)
+        {
+            laser.GetComponent<Laser>().isEnemyLaser = true;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
@@ -166,7 +213,7 @@ public class Enemy : MonoBehaviour
             _enemyHealth.Damage();
 
         }
-        else if (other.tag == "Laser" && !isDestroyed)
+        else if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
         {
 
             if (isShielded)

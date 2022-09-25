@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 883237669170592114}
-  - component: {fileID: -6584962154457240781}
+  - component: {fileID: 2032053948145925562}
   - component: {fileID: 3016695181940542594}
   - component: {fileID: 4629288733340139875}
   - component: {fileID: 4124009948293959398}
@@ -38,7 +38,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-6584962154457240781
+--- !u!114 &2032053948145925562
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -47,37 +47,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 1929522453564359244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f5d1f072b6553c4c989bf5829030315, type: 3}
+  m_Script: {fileID: 11500000, guid: d290c3ba8256d9c4e9ba515b578679a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
+  speed: 3.5
   enemyType: 1
-  _movementAttr:
-  - movementType: 0
+  movementTypes:
+  - TopToBottom
+  - LeftToRight
+  - RightToLeft
+  movementAttr:
+  - movementType: TopToBottom
     startPoint: {x: 0, y: 7}
     randomRangeMin: 0
     randomRangeMax: 8
     moveDistance: 15
     rotation: 0
-  - movementType: 1
+  - movementType: LeftToRight
     startPoint: {x: -11, y: 0}
     randomRangeMin: 0
     randomRangeMax: 5
     moveDistance: 22
-    rotation: 90
-  - movementType: 2
+    rotation: 0
+  - movementType: RightToLeft
     startPoint: {x: 11, y: 0}
     randomRangeMin: 0
     randomRangeMax: 5
     moveDistance: 22
-    rotation: 270
-  movementType: 0
+    rotation: 0
+  movementType: 
   isShielded: 0
-  _fireRate: 0.3
   isArmed: 1
-  _shield: {fileID: 5337509803825803943}
-  _enemyLaser: {fileID: 4494707559406793499, guid: f89ed691a21c20146a4d8019f17c31d9, type: 3}
+  shield: {fileID: 5337509803825803943}
+  enemyLaser: {fileID: 4494707559406793499, guid: f89ed691a21c20146a4d8019f17c31d9, type: 3}
   isDestroyed: 0
+  _fireRate: 0.5
 --- !u!114 &3016695181940542594
 MonoBehaviour:
   m_ObjectHideFlags: 0

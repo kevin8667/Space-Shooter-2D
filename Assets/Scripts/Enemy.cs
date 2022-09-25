@@ -1,23 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public enum MovementType
-    {
-        UpToBottom,
-        LeftToRight,
-        RightToLeft
-
-    };
-
     public enum EnemyType
     {
         Normal,
-        Gunship
-
+        Gunship,
+        Agressive
     };
 
     [Header("Movement Settings")]
@@ -26,10 +17,12 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     public EnemyType enemyType;
 
+    public string[] movementTypes;
+
     [System.Serializable]
     public struct MovementAttributes
     {
-        public MovementType movementType;
+        public string movementType;
         public Vector2 startPoint;
         public float randomRangeMin, randomRangeMax;
         public float moveDistance;
@@ -37,58 +30,38 @@ public class Enemy : MonoBehaviour
     }
 
     [SerializeField]
-    MovementAttributes[] _movementAttr;
+    protected MovementAttributes[] movementAttr;
 
     [HideInInspector]
-    public MovementType movementType;
+    public string movementType;
 
     [HideInInspector]
     public bool isShielded;
 
-    [Header("Weapon Settings")]
-    [SerializeField]
-    float _fireRate = 0.5f;
-    float _canFire = 0f;
-
     public bool isArmed;
 
     [SerializeField]
-    GameObject _shield;
+    protected GameObject shield;
 
     [SerializeField]
-    GameObject _enemyLaser;
+    protected GameObject enemyLaser;
 
-    Vector2 startPos;
+    protected Vector2 startPos;
 
-    public IDictionary<MovementType, MovementAttributes> movementAttrDic;
+    public IDictionary<string, MovementAttributes> movementAttrDic;
 
     [HideInInspector]
     public bool isDestroyed;
 
-    EnemyHealth _enemyHealth;
+    protected EnemyHealth enemyHealth;
 
      void Awake()
     {
-        movementAttrDic = new Dictionary<MovementType, MovementAttributes>();
 
-        for (int i = 0; i < _movementAttr.Length; i++)
-        {
-            switch (i)
-            {
-                case 0:
-                    _movementAttr[i].startPoint = new Vector2(Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax), _movementAttr[i].startPoint.y);
-                    movementAttrDic.Add(_movementAttr[i].movementType, _movementAttr[i]);
-                    break;
-                case 1:
-                    _movementAttr[i].startPoint = new Vector2(_movementAttr[i].startPoint.x, Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax));
-                    movementAttrDic.Add(_movementAttr[i].movementType, _movementAttr[i]);
-                    break;
-                case 2:
-                    _movementAttr[i].startPoint = new Vector2(_movementAttr[i].startPoint.x, Random.Range(_movementAttr[i].randomRangeMin, _movementAttr[i].randomRangeMax));
-                    movementAttrDic.Add(_movementAttr[i].movementType, _movementAttr[i]);
-                    break;
-            }
-        }
+
+        movementAttrDic = new Dictionary<string, MovementAttributes>();
+
+        IniitalizeDictionary();
     }
 
     // Start is called before the first frame update
@@ -99,9 +72,9 @@ public class Enemy : MonoBehaviour
 
         if (isShielded)
         {
-            _shield.SetActive(true);
+            shield.SetActive(true);
         }
-        _enemyHealth = GetComponent<EnemyHealth>();
+        enemyHealth = GetComponent<EnemyHealth>();
 
 
     }
@@ -112,34 +85,33 @@ public class Enemy : MonoBehaviour
 
         MoveEnemy();
 
-        if(isArmed && Time.time >= _canFire)
-        {
-            FireLaser();
-        }
-
     }
 
-    void MoveEnemy()
+    protected virtual void IniitalizeDictionary()
     {
-        if (enemyType == EnemyType.Gunship)
+        for (int i = 0; i < movementAttr.Length; i++)
         {
-            switch (movementType)
+            switch (i)
             {
-                case MovementType.UpToBottom:
-                    transform.Translate(Vector3.down * speed * Time.deltaTime);
+                case 0:
+                    movementAttr[i].startPoint = new Vector2(Random.Range(movementAttr[i].randomRangeMin, movementAttr[i].randomRangeMax), movementAttr[i].startPoint.y);
+                    movementAttrDic.Add(movementAttr[i].movementType, movementAttr[i]);
                     break;
-                case MovementType.LeftToRight:
-                    transform.Translate(Vector3.right * speed * Time.deltaTime);
+                case 1:
+                    movementAttr[i].startPoint = new Vector2(movementAttr[i].startPoint.x, Random.Range(movementAttr[i].randomRangeMin, movementAttr[i].randomRangeMax));
+                    movementAttrDic.Add(movementAttr[i].movementType, movementAttr[i]);
                     break;
-                case MovementType.RightToLeft:
-                    transform.Translate(-Vector3.right * speed * Time.deltaTime);
+                case 2:
+                    movementAttr[i].startPoint = new Vector2(movementAttr[i].startPoint.x, Random.Range(movementAttr[i].randomRangeMin, movementAttr[i].randomRangeMax));
+                    movementAttrDic.Add(movementAttr[i].movementType, movementAttr[i]);
                     break;
             }
         }
-        else
-        {
-            transform.Translate(Vector3.down * speed * Time.deltaTime);
-        }
+    }
+
+    protected virtual void MoveEnemy()
+    {
+        transform.Translate(Vector3.down * speed * Time.deltaTime);
 
         float distance = Vector2.Distance(transform.position, startPos);
 
@@ -149,21 +121,21 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void ResetPosition()
+    protected virtual void ResetPosition()
     {
         transform.position = RandomizeStartPoint();
         startPos = transform.position;
     }
 
-    Vector2  RandomizeStartPoint()
+    protected virtual Vector2 RandomizeStartPoint()
     {
         Vector2 point = new Vector2(0, 0);
         switch (movementType)
         {
-            case MovementType.UpToBottom:
+            case "TopToBottom":
                 point = new Vector2(Random.Range(movementAttrDic[movementType].randomRangeMin, movementAttrDic[movementType].randomRangeMax), movementAttrDic[movementType].startPoint.y);
                 break;
-            case MovementType.LeftToRight: case MovementType.RightToLeft:
+            case "LeftToRight": case "RightToLeft":
                 point = new Vector2(movementAttrDic[movementType].startPoint.x, Random.Range(movementAttrDic[movementType].randomRangeMin, movementAttrDic[movementType].randomRangeMax));
                 break;
         }
@@ -174,21 +146,7 @@ public class Enemy : MonoBehaviour
 
     public void ToggleShield()
     {
-        _shield.SetActive(isShielded);
-    }
-
-    void FireLaser()
-    {
-        _canFire = Time.time + _fireRate;
-
-        GameObject enemyLaser = Instantiate(_enemyLaser, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
-
-        Laser[] lasers = enemyLaser.GetComponentsInChildren<Laser>();
-
-        foreach(Laser laser in lasers)
-        {
-            laser.GetComponent<Laser>().isEnemyLaser = true;
-        }
+        shield.SetActive(isShielded);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -205,12 +163,12 @@ public class Enemy : MonoBehaviour
             if (isShielded)
             {
                 isShielded = false;
-                _enemyHealth.PlayShieldBreakingSFX();
+                enemyHealth.PlayShieldBreakingSFX();
                 ToggleShield();
                 return;
             }
 
-            _enemyHealth.Damage();
+            enemyHealth.Damage();
 
         }
         else if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
@@ -219,7 +177,7 @@ public class Enemy : MonoBehaviour
             if (isShielded)
             {
                 isShielded = false;
-                _enemyHealth.PlayShieldBreakingSFX();
+                enemyHealth.PlayShieldBreakingSFX();
                 ToggleShield();
                 Destroy(other.gameObject);
                 return;
@@ -227,7 +185,7 @@ public class Enemy : MonoBehaviour
 
             Destroy(other.gameObject);
 
-            _enemyHealth.Damage();
+            enemyHealth.Damage();
 
         }
     }

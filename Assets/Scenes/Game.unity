@@ -1160,6 +1160,7 @@ MonoBehaviour:
   - {fileID: 486586684649662666, guid: 5480e47c2b1049248a6778ce5e2c7282, type: 3}
   - {fileID: 2818601284973976621, guid: ac57d24015ad57d4c964be7201eafa03, type: 3}
   - {fileID: 5044054263800412405, guid: 6e9bd2f399e456249886471b83cc6a33, type: 3}
+  _powerupProbabilities: 0.6
   _uIManager: {fileID: 1072003907}
 --- !u!4 &916747431
 Transform:

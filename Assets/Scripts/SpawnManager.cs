@@ -6,6 +6,7 @@ using UnityEngine.PlayerLoop;
 
 public class SpawnManager : MonoBehaviour
 {
+    [Header("Enemy Related Settings")]
     [SerializeField]
     int _waveNumber = 3;
 
@@ -22,8 +23,12 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     GameObject[] _enemyPrefab;
 
+    [Header("Powerup Related Settings")]
     [SerializeField]
     GameObject[] _powerups;
+
+    [SerializeField]
+    float _powerupProbabilities;
 
     GameObject _player;
 
@@ -87,7 +92,7 @@ public class SpawnManager : MonoBehaviour
 
                 if (rand <= 0.5f)
                 {
-                    enemyData.movementType = Enemy.MovementType.UpToBottom;
+                    enemyData.movementType = enemyData.movementTypes[0];
 
                     SetEnemy(newEnemy, enemyData);
 
@@ -100,7 +105,7 @@ public class SpawnManager : MonoBehaviour
 
                     if (rand2 > 0.75f)
                     {
-                        enemyData.movementType = Enemy.MovementType.LeftToRight;
+                        enemyData.movementType = enemyData.movementTypes[1];
 
                         SetEnemy(newEnemy, enemyData);
 
@@ -108,7 +113,7 @@ public class SpawnManager : MonoBehaviour
                     }
                     else if (rand2 < 0.75f)
                     {
-                        enemyData.movementType = Enemy.MovementType.RightToLeft;
+                        enemyData.movementType = enemyData.movementTypes[2];
 
                         SetEnemy(newEnemy, enemyData);
 
@@ -124,17 +129,11 @@ public class SpawnManager : MonoBehaviour
     {
         destroyedEnemyNumber = 0;
 
-        Debug.Log("Destyored enemies:" + destroyedEnemyNumber);
-
         _currentWave++;
-
-        Debug.Log("Current wave:" + _currentWave);
 
         _uIManager.UpdateWaveText(_currentWave+1);
 
         _enemyNumber = 0;
-
-        Debug.Log("Enemy number:" + _enemyNumber);
 
         yield return new WaitForSeconds(1f);
 
@@ -143,11 +142,8 @@ public class SpawnManager : MonoBehaviour
 
     void SetEnemy(GameObject newEnemy, Enemy enemyData)
     {
-        if (enemyData.enemyType != Enemy.EnemyType.Gunship)
-        {
-            newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
-        }
-        
+        newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
+
         newEnemy.transform.position = enemyData.movementAttrDic[enemyData.movementType].startPoint;
 
         newEnemy.transform.parent = gameObject.transform;
@@ -156,7 +152,12 @@ public class SpawnManager : MonoBehaviour
 
         if(rand <= 0.3f)
         {
-            enemyData.isShielded = true;
+            if(newEnemy.transform.Find("Shield") != null)
+            {
+                enemyData.isShielded = true;
+
+            }
+            
         }
     }
 
@@ -169,9 +170,6 @@ public class SpawnManager : MonoBehaviour
             Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
 
             yield return new WaitForSeconds(Random.Range(3f, 7f));
-
-            
-
         }
     }
 
@@ -183,14 +181,23 @@ public class SpawnManager : MonoBehaviour
 
             float rand = Random.value;
 
-            if (rand > 0.5f)
+            if (rand > 0.7f)
             {
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
 
             }
-            if (rand < 0.5f)
+            if (rand < 0.3f)
             {
-                Instantiate(_powerups[Random.Range(3, 5)], spawningPos, Quaternion.identity);
+                float rand2 = Random.value;
+
+                if(rand2 >= _powerupProbabilities)
+                {
+                    Instantiate(_powerups[4], spawningPos, Quaternion.identity);
+                }
+                else
+                {
+                    Instantiate(_powerups[3], spawningPos, Quaternion.identity);
+                }
 
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
             }

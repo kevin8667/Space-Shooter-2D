@@ -51,7 +51,7 @@ public class EnemyHealth : MonoBehaviour
 
     public void Damage()
     {
-        if (enemy.enemyType == Enemy.EnemyType.Gunship)
+        if (enemy.enemyType != Enemy.EnemyType.Normal)
         {
             Instantiate(_newExplosionPrefab, transform.position, Quaternion.identity);
 

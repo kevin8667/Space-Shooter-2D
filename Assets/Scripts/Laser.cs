@@ -55,7 +55,6 @@ public class Laser : MonoBehaviour
             if (_transformMin == null)
             {
                 FindNearestTraget();
-
             }
 
             ChaseTarget();

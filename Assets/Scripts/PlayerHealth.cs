@@ -65,8 +65,10 @@ public class PlayerHealth : MonoBehaviour
         }
 
         health--;
-
-        _uIManager.UpadateLives(health);
+        if(health >= 0)
+        {
+            _uIManager.UpadateLives(health);
+        }
 
         _cameraManager.CamaraShake();
 

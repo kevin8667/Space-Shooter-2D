@@ -58,8 +58,9 @@ public class Enemy : MonoBehaviour
      void Awake()
     {
 
-
         movementAttrDic = new Dictionary<string, MovementAttributes>();
+
+        RandomizeType();
 
         IniitalizeDictionary();
     }
@@ -67,6 +68,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetEnemy();
 
         startPos = transform.position;
 
@@ -76,6 +78,7 @@ public class Enemy : MonoBehaviour
         }
         enemyHealth = GetComponent<EnemyHealth>();
 
+        Debug.Log(movementType);
 
     }
 
@@ -85,6 +88,30 @@ public class Enemy : MonoBehaviour
 
         MoveEnemy();
 
+    }
+
+    protected void RandomizeType()
+    {
+        float rand = Random.value;
+
+        if (rand <= 0.5f)
+        {
+            movementType = movementTypes[0];
+        }
+
+        if (rand > 0.5f)
+        {
+            float rand2 = Random.Range(rand, 1f);
+
+            if (rand2 > 0.75f)
+            {
+                movementType = movementTypes[1];
+            }
+            else if (rand2 < 0.75f)
+            {
+                movementType = movementTypes[2];
+            }
+        }
     }
 
     protected virtual void IniitalizeDictionary()
@@ -109,15 +136,36 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
+    protected virtual void SetEnemy()
+    {
+        transform.rotation *= Quaternion.Euler(0, 0, movementAttrDic[movementType].rotation);
+
+        transform.position = movementAttrDic[movementType].startPoint;
+
+        float rand = Random.value;
+
+        if (rand <= 0.3f)
+        {
+            if (transform.Find("Shield") != null)
+            {
+                isShielded = true;
+            }
+
+        }
+    }
+
+
     protected virtual void MoveEnemy()
     {
         transform.Translate(Vector3.down * speed * Time.deltaTime);
 
-        float distance = Vector2.Distance(transform.position, startPos);
-
-        if (distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
+        if (!isDestroyed)
         {
-            ResetPosition();
+            if (transform.position.x > 11 || transform.position.x < -11 || transform.position.y > 8 || transform.position.y < -8)
+            {
+                ResetPosition();
+            }
         }
     }
 
@@ -143,7 +191,6 @@ public class Enemy : MonoBehaviour
 
     }
     
-
     public void ToggleShield()
     {
         shield.SetActive(isShielded);

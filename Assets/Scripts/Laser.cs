@@ -176,6 +176,8 @@ public class Laser : MonoBehaviour
             {
                 playerHealth.Damage();
             }
+
+            Destroy(gameObject);
         }
     }
 

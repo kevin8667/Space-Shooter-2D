@@ -79,47 +79,11 @@ public class SpawnManager : MonoBehaviour
 
                 int randEnemy = Random.Range(0, _enemyPrefab.Length);
 
-                Enemy enemyData = null;
-
                 GameObject newEnemy = Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
 
                 _enemyNumber++;
 
-                if (newEnemy.GetComponent<Enemy>() != null)
-                {
-                    enemyData = newEnemy.GetComponent<Enemy>();
-                }
-
-                if (rand <= 0.5f)
-                {
-                    enemyData.movementType = enemyData.movementTypes[0];
-
-                    SetEnemy(newEnemy, enemyData);
-
-                    yield return new WaitForSeconds(3f);
-                }
-
-                if (rand > 0.5f)
-                {
-                    float rand2 = Random.Range(rand, 1f);
-
-                    if (rand2 > 0.75f)
-                    {
-                        enemyData.movementType = enemyData.movementTypes[1];
-
-                        SetEnemy(newEnemy, enemyData);
-
-                        yield return new WaitForSeconds(3f);
-                    }
-                    else if (rand2 < 0.75f)
-                    {
-                        enemyData.movementType = enemyData.movementTypes[2];
-
-                        SetEnemy(newEnemy, enemyData);
-
-                        yield return new WaitForSeconds(3f);
-                    }
-                }
+                yield return new WaitForSeconds(3f);
 
             }
         }
@@ -139,27 +103,6 @@ public class SpawnManager : MonoBehaviour
 
     }
 
-
-    void SetEnemy(GameObject newEnemy, Enemy enemyData)
-    {
-        newEnemy.transform.rotation *= Quaternion.Euler(0, 0, enemyData.movementAttrDic[enemyData.movementType].rotation);
-
-        newEnemy.transform.position = enemyData.movementAttrDic[enemyData.movementType].startPoint;
-
-        newEnemy.transform.parent = gameObject.transform;
-
-        float rand = Random.value;
-
-        if(rand <= 0.3f)
-        {
-            if(newEnemy.transform.Find("Shield") != null)
-            {
-                enemyData.isShielded = true;
-
-            }
-            
-        }
-    }
 
     IEnumerator SpawnPowerupsRoutine()
     {

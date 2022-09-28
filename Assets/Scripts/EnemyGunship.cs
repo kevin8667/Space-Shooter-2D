@@ -36,11 +36,12 @@ public class EnemyGunship : Enemy
                 break;
         }
 
-        float distance = Vector2.Distance(transform.position, startPos);
-
-        if (distance >= movementAttrDic[movementType].moveDistance && !isDestroyed)
+        if (!isDestroyed)
         {
-            ResetPosition();
+            if (transform.position.x > 11 || transform.position.x < -11 || transform.position.y > 8 || transform.position.y < -8)
+            {
+                ResetPosition();
+            }
         }
     }
 

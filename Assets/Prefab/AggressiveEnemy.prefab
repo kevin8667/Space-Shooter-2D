@@ -9,14 +9,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 883237669170592114}
-  - component: {fileID: 7846035695238007435}
+  - component: {fileID: 6485050530545335777}
   - component: {fileID: 3016695181940542594}
   - component: {fileID: 4629288733340139875}
   - component: {fileID: 4124009948293959398}
   - component: {fileID: 655396391213671890}
   - component: {fileID: 8111571641992867795}
   m_Layer: 0
-  m_Name: AggresiveEnemy
+  m_Name: AggressiveEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,7 +37,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7846035695238007435
+--- !u!114 &6485050530545335777
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,20 +46,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 1929522453564359244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 888b57e49743b224dbf7757853f75608, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cb5d9a251b0f784485e0a75b052203e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4.5
-  enemyType: 0
-  movementTypes: []
-  _movementAttr: []
-  movementType: UpToBottom
+  enemyType: 2
+  movementTypes:
+  - TopToBottom
+  - LeftToRight
+  - RightToLeft
+  movementAttr:
+  - movementType: TopToBottom
+    startPoint: {x: 0, y: 7}
+    randomRangeMin: -8
+    randomRangeMax: 8
+    moveDistance: 15
+    rotation: 0
+  - movementType: LeftToRight
+    startPoint: {x: -11, y: 0}
+    randomRangeMin: -4
+    randomRangeMax: 2
+    moveDistance: 22
+    rotation: 90
+  - movementType: RightToLeft
+    startPoint: {x: 11, y: 0}
+    randomRangeMin: -4
+    randomRangeMax: 2
+    moveDistance: 22
+    rotation: 270
+  movementType: 
   isShielded: 0
   isArmed: 0
-  _shield: {fileID: 0}
-  _enemyLaser: {fileID: 0}
+  shield: {fileID: 0}
+  enemyLaser: {fileID: 0}
   isDestroyed: 0
-  _fireRate: 0.5
+  _aimingRange: 5
+  _rammingSpeed: 8
 --- !u!114 &3016695181940542594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,7 +163,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.025921106, y: 0.06912184}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -152,7 +174,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 12.468101, y: 9.721989}
+  m_Size: {x: 4.5363164, y: 5.7820177}
   m_EdgeRadius: 0
 --- !u!50 &655396391213671890
 Rigidbody2D:

@@ -138,8 +138,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 10
   _rotateSpeed: 750
-  _duration: 3
+  _duration: 2
   _isHomingLaser: 1
+  isEnemyLaser: 0
 --- !u!96 &4622677527449273754
 TrailRenderer:
   serializedVersion: 2
@@ -199,7 +200,7 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.45289862
+        time: 0.49951762
         value: 0
         inSlope: 0
         outSlope: 0

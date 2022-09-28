@@ -65,7 +65,7 @@ public class EnemyHealth : MonoBehaviour
 
             _spawnManager.destroyedEnemyNumber++;
 
-            Destroy(gameObject, 0.3f);
+            Destroy(gameObject, 0.2f);
         }
         else
         {

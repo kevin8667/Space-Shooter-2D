@@ -54,11 +54,11 @@ MonoBehaviour:
   speed: 4.5
   enemyType: 0
   movementTypes:
-  - UpToBottom
+  - TopToBottom
   - LeftToRight
   - RightToLeft
   movementAttr:
-  - movementType: UpToBottom
+  - movementType: TopToBottom
     startPoint: {x: 0, y: 7}
     randomRangeMin: -8
     randomRangeMax: 8

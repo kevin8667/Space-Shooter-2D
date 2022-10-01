@@ -161,6 +161,7 @@ MonoBehaviour:
   maxAmmo: 15
   ammoCount: 0
   _reloadTime: 3
+  _bombCount: 3
   _fuelTime: 3
   isShielded: 0
   shield: {fileID: 8929206222285230687}
@@ -187,6 +188,7 @@ MonoBehaviour:
   shieldHealth: 0
   _newExplosionPrefab: {fileID: 5699366482873925111, guid: 686f49e9e29ad094f9039d501897f1df, type: 3}
   _shieldBreakingSFX: {fileID: 8300000, guid: 0f8ee8b7c1de70c4dbfa131350c1dd49, type: 3}
+  _damageSFX: {fileID: 8300000, guid: 568526a91c10ff543aae2bbad1d7009d, type: 3}
 --- !u!212 &4215944491426162154
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -252,7 +254,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.032684684, y: -0.016342163}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}

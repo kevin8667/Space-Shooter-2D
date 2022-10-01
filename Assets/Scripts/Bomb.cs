@@ -62,6 +62,8 @@ public class Bomb : MonoBehaviour
 
             FindObjectOfType<GameManager>().AddScore(e.GetComponent<EnemyHealth>().ScoreIncrement);
 
+            FindObjectOfType<SpawnManager>().destroyedEnemyNumber++;
+
             Destroy(e.gameObject, 1.3f);
         }
 

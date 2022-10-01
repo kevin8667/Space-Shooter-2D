@@ -14,8 +14,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     float _duration = 2.5f;
 
-    [SerializeField]
-    bool _isHomingLaser;
+    public bool isHomingLaser;
 
     [HideInInspector]
     public bool isEnemyLaser;
@@ -50,7 +49,7 @@ public class Laser : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (_isHomingLaser)
+        if (isHomingLaser)
         {
             if (_transformMin == null)
             {
@@ -67,7 +66,7 @@ public class Laser : MonoBehaviour
     {
         float distance = Vector2.Distance(transform.position, _currentPos);
 
-        if (!_isHomingLaser)
+        if (!isHomingLaser)
         {
             if (isEnemyLaser)
             {

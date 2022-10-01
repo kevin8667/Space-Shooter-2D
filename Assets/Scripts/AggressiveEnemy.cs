@@ -18,13 +18,25 @@ public class AggressiveEnemy : Enemy
 
         MoveEnemy();
 
-        float _distanceToTarget = Vector3.Distance(GameObject.Find("Player").transform.position, transform.position);
+        float distanceToTarget = 0f;
 
-        if (_distanceToTarget <= _aimingRange && !_isAiming)
+        GameObject target = GameObject.Find("Player");
+
+        if(target != null)
         {
-            _isAiming = true;
+            distanceToTarget = Vector3.Distance(GameObject.Find("Player").transform.position, transform.position);
+        }
 
-            StartCoroutine(AimingRoutine());
+
+        if (distanceToTarget <= _aimingRange && !_isAiming)
+        {
+            if (target != null)
+            {
+                _isAiming = true;
+
+                StartCoroutine(AimingRoutine());
+            }
+            
         }
 
         if (_isLockedOn)

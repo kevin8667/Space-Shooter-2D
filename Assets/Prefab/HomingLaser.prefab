@@ -139,7 +139,7 @@ MonoBehaviour:
   _speed: 10
   _rotateSpeed: 750
   _duration: 2
-  _isHomingLaser: 1
+  isHomingLaser: 1
   isEnemyLaser: 0
 --- !u!96 &4622677527449273754
 TrailRenderer:

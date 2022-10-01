@@ -9,6 +9,8 @@ public class PlayerHealth : MonoBehaviour
 
     public int shieldHealth = 0;
 
+    bool _isInvincible, _isDestroyed;
+
     Player _player;
 
     UIManager _uIManager;
@@ -23,7 +25,7 @@ public class PlayerHealth : MonoBehaviour
     Color _shieldColor;
 
     [SerializeField]
-    AudioClip _shieldBreakingSFX;
+    AudioClip _shieldBreakingSFX, _damageSFX;
 
     private void Start()
     {
@@ -64,16 +66,27 @@ public class PlayerHealth : MonoBehaviour
             return;
         }
 
-        health--;
-        if(health >= 0)
+        if (!_isInvincible)
+        {
+            _isInvincible = true;
+
+            health--;
+
+            _cameraManager.CamaraShake();
+
+            StartCoroutine(DamageSequence());
+            StartCoroutine(DamageSequenceTimer());
+        }
+        
+        if (health >= 0)
         {
             _uIManager.UpadateLives(health);
         }
 
-        _cameraManager.CamaraShake();
-
-        if (health < 1)
+        if (health < 1 && !_isDestroyed)
         {
+            _isDestroyed = true;
+
             _uIManager.ShowGameOverUI();
 
             _gameManager.isGameOVer = true;
@@ -87,6 +100,33 @@ public class PlayerHealth : MonoBehaviour
 
     }
 
+
+    IEnumerator DamageSequence()
+    {
+        AudioSource.PlayClipAtPoint(_damageSFX, GameObject.Find("Main Camera").transform.position, 1f);
+
+        while (_isInvincible)
+        {
+            GetComponent<SpriteRenderer>().enabled = false;
+
+            yield return new WaitForSeconds(0.1f);
+
+            GetComponent<SpriteRenderer>().enabled = true;
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+    }
+
+    IEnumerator DamageSequenceTimer()
+    {
+        _isInvincible = true;
+
+        yield return new WaitForSeconds(1f);
+
+        _isInvincible = false;
+
+    }
 
     void ShieldDamage()
     {

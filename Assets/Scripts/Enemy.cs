@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class Enemy : MonoBehaviour
 {
@@ -53,6 +55,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public bool isDestroyed;
 
+    bool _isDodged;
+
     protected EnemyHealth enemyHealth;
 
      void Awake()
@@ -68,6 +72,7 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         SetEnemy();
 
         startPos = transform.position;
@@ -76,9 +81,8 @@ public class Enemy : MonoBehaviour
         {
             shield.SetActive(true);
         }
-        enemyHealth = GetComponent<EnemyHealth>();
 
-        Debug.Log(movementType);
+        enemyHealth = GetComponent<EnemyHealth>();
 
     }
 
@@ -87,6 +91,11 @@ public class Enemy : MonoBehaviour
     {
 
         MoveEnemy();
+
+        if (!_isDodged)
+        {        
+            DetectLaser();    
+        }
 
     }
 
@@ -107,7 +116,8 @@ public class Enemy : MonoBehaviour
             {
                 movementType = movementTypes[1];
             }
-            else if (rand2 < 0.75f)
+            
+            if (rand2 < 0.75f && rand2 > 0.5f)
             {
                 movementType = movementTypes[2];
             }
@@ -155,7 +165,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
     protected virtual void MoveEnemy()
     {
         transform.Translate(Vector3.down * speed * Time.deltaTime);
@@ -173,6 +182,7 @@ public class Enemy : MonoBehaviour
     {
         transform.position = RandomizeStartPoint();
         startPos = transform.position;
+        _isDodged = false;
     }
 
     protected virtual Vector2 RandomizeStartPoint()
@@ -195,6 +205,176 @@ public class Enemy : MonoBehaviour
     {
         shield.SetActive(isShielded);
     }
+
+    void DetectLaser()
+    {
+        GameObject[] lasers = GameObject.FindGameObjectsWithTag("Laser");
+        List<Laser> playerLasers = new List<Laser>();
+
+        if(lasers != null)
+        {
+            foreach(GameObject laser in lasers)
+            {
+                if (!laser.GetComponent<Laser>().isEnemyLaser && !laser.GetComponent<Laser>().isHomingLaser)
+                {
+                    playerLasers.Add(laser.GetComponent<Laser>());
+                }
+            }
+        }
+
+        foreach(Laser playerLaser in playerLasers)
+        {
+            float distance;
+            float angle;
+
+            if (movementType == movementTypes[0])
+            {
+                angle = Vector2.SignedAngle(Vector2.down, playerLaser.transform.position - transform.position);
+
+                if (Mathf.Abs(angle) < 20)
+                {
+                    distance = Vector2.Distance(playerLaser.transform.position, transform.position);
+
+                    if (distance <= 2.2f)
+                    {
+                        StartCoroutine(AvoidLaser(angle));
+                    }
+                }
+            }
+
+            if (movementType == movementTypes[1])
+            {
+                angle = Vector2.SignedAngle(Vector2.right, playerLaser.transform.position - transform.position);
+
+                if (Mathf.Abs(angle) < 20)
+                {
+                    distance = Vector2.Distance(playerLaser.transform.position, transform.position);
+
+                    if (distance <= 2.2f)
+                    {
+                        StartCoroutine(AvoidLaser(angle));
+                    }
+                }
+            }
+
+            if (movementType == movementTypes[2])
+            {
+                angle = Vector2.SignedAngle(Vector2.left, playerLaser.transform.position - transform.position);
+
+                if (Mathf.Abs(angle) < 20)
+                {
+                    distance = Vector2.Distance(playerLaser.transform.position, transform.position);
+
+                    if (distance <= 2.2f)
+                    {                      
+                        StartCoroutine(AvoidLaser(angle));
+                    }
+                    
+                }
+            }
+
+        }
+    }
+
+    IEnumerator AvoidLaser(float angle)
+    {
+        float elapedTime = 0;
+        float duration = 0.1f;
+
+        if (movementType == movementTypes[0])
+        {
+            
+            if (angle <= 0)
+            {
+                _isDodged = true;
+
+                while (elapedTime < duration)
+                {
+                    elapedTime += Time.deltaTime;
+
+                    transform.position = Vector2.Lerp(transform.position, new Vector2(transform.position.x + 0.7f, transform.position.y), elapedTime);
+
+                    if (transform.position.x > 10)
+                    {
+                        transform.position = new Vector2(10, transform.position.y);
+                    }
+                    else if (transform.position.x < -10)
+                    {
+                        transform.position = new Vector2(-10, transform.position.y);
+                    }
+
+                    yield return null;
+                }
+                
+            }
+
+            if (angle > 0)
+            {
+                _isDodged = true;
+
+                while (elapedTime < duration)
+                {
+                    elapedTime += Time.deltaTime;
+
+                    transform.position = Vector2.Lerp(transform.position, new Vector2(transform.position.x - 0.7f, transform.position.y), elapedTime);
+
+                    if (transform.position.x > 10)
+                    {
+                        transform.position = new Vector2(10, transform.position.y);
+                    }
+                    else if (transform.position.x < -10)
+                    {
+                        transform.position = new Vector2(-10, transform.position.y);
+                    }
+
+                    yield return null;
+                }
+
+            }
+        }
+
+        if(movementType == movementTypes[1])
+        {
+            _isDodged = true;
+
+            while (elapedTime < duration)
+            {
+                elapedTime += Time.deltaTime;
+
+                transform.position = Vector2.Lerp(transform.position, new Vector2(transform.position.x - 1f, transform.position.y), elapedTime);
+
+                if (transform.position.x < -10)
+                {
+                    transform.position = new Vector2(-10, transform.position.y);
+                }
+
+                yield return null;
+            }
+        }
+
+        if (movementType == movementTypes[2])
+        {
+            _isDodged = true;
+
+            while (elapedTime < duration)
+            {
+                elapedTime += Time.deltaTime;
+
+                transform.position = Vector2.Lerp(transform.position, new Vector2(transform.position.x + 1f, transform.position.y), elapedTime);
+
+                if (transform.position.x > 10)
+                {
+                    transform.position = new Vector2(10, transform.position.y);
+                }
+
+                yield return null;
+            }
+
+        }
+
+        
+    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -237,5 +417,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    
+
+
 }

@@ -196,7 +196,7 @@ public class Player : MonoBehaviour
             _isBombing = false;
         }
 
-        if (Input.GetKeyDown(KeyCode.H) && !_isBombing)
+        if (Input.GetKeyDown(KeyCode.B) && !_isBombing)
         {
             DeployBomb();
         }

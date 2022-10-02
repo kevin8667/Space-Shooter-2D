@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
     {
         _score.text = "Score: " + _gameManager.score;
 
-        _wave.color = new Color(1, 1, 1, 0);
+        _wave.color = new Color(1, 0, 0, 0);
     }
 
     public void UpdateScore()
@@ -75,7 +75,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateWaveText(int waveNumber)
     {
-        _wave.color = new Color(1, 1, 1, 1);
+        _wave.color = new Color(1, 0, 0, 1);
 
         _wave.text = "Wave:" + waveNumber;
 
@@ -91,7 +91,7 @@ public class UIManager : MonoBehaviour
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
-            _wave.color = Color.Lerp(alpha, new Color(1, 1, 1, 0), elapsedTime / duration);
+            _wave.color = Color.Lerp(alpha, new Color(1, 0, 0, 0), elapsedTime / duration);
             yield return null;
         }
     }

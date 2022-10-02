@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bomb : MonoBehaviour
@@ -35,11 +34,11 @@ public class Bomb : MonoBehaviour
     private void Update()
     {
 
-        foreach (Enemy e in enemies)
+        foreach (Enemy enemy in enemies)
         {
-            if (e != null)
+            if (enemy != null && !enemy.isDestroyed)
             {
-                e.transform.position = Vector2.MoveTowards(e.transform.position, new Vector2(0, 0), 10f * Time.deltaTime);
+                enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, new Vector2(0, 0), 10f * Time.deltaTime);
             }
  
         }
@@ -48,23 +47,27 @@ public class Bomb : MonoBehaviour
 
     void Explosion()
     {
-        StartCoroutine(PauseBGM());
+        StartCoroutine(ChangeBGMVolume());
 
         _explosion.Play();
 
         enemies = FindObjectsOfType<Enemy>();
 
-        foreach (Enemy e in enemies)
+        foreach (Enemy enemy in enemies)
         {
-            e.speed = 0;
+            if (!enemy.isDestroyed)
+            {
+                enemy.speed = 0;
 
-            e.GetComponent<Collider2D>().enabled = false;
+                enemy.GetComponent<Collider2D>().enabled = false;
 
-            FindObjectOfType<GameManager>().AddScore(e.GetComponent<EnemyHealth>().ScoreIncrement);
+                FindObjectOfType<GameManager>().AddScore(enemy.GetComponent<EnemyHealth>().ScoreIncrement);
 
-            FindObjectOfType<SpawnManager>().destroyedEnemyNumber++;
+                FindObjectOfType<SpawnManager>().destroyedEnemyNumber++;
 
-            Destroy(e.gameObject, 1.3f);
+                Destroy(enemy.gameObject, 1.3f);
+            }
+           
         }
 
         _audioSource.Play();
@@ -73,7 +76,7 @@ public class Bomb : MonoBehaviour
 
     }
 
-    IEnumerator PauseBGM()
+    IEnumerator ChangeBGMVolume()
     {
         AudioSource BGM = GameObject.Find("BGMManager").GetComponent<AudioSource>();
 

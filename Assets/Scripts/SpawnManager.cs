@@ -14,6 +14,9 @@ public class SpawnManager : MonoBehaviour
 
     int _enemyNumber = 0;
 
+    [SerializeField]
+    float _spawningInterval = 3f;
+
     [HideInInspector]
     public int destroyedEnemyNumber = 0;
 
@@ -22,6 +25,8 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     GameObject[] _enemyPrefab;
+
+    
 
     [Header("Powerup Related Settings")]
     [SerializeField]
@@ -83,7 +88,7 @@ public class SpawnManager : MonoBehaviour
 
                 _enemyNumber++;
 
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(_spawningInterval);
 
             }
         }
@@ -143,6 +148,8 @@ public class SpawnManager : MonoBehaviour
                 }
 
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
+
+
             }
         }
 

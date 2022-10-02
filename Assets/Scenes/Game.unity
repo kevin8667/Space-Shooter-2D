@@ -924,7 +924,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &817314035
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1148,8 +1148,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _waveNumber: 3
+  _spawningInterval: 1.5
   destroyedEnemyNumber: 0
-  _enemiesInWaves: 010000000200000003000000
+  _enemiesInWaves: 0a0000000f00000014000000
   _enemyPrefab:
   - {fileID: 1929522453564359244, guid: 3dfc10769c40ff246930344b46790de8, type: 3}
   - {fileID: 1929522453564359244, guid: 3dfc10769c40ff246930344b46790de8, type: 3}

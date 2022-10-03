@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
-
+    [Header("Genaral Settings")]
     [SerializeField]
     float _speed = 8.0f;
 
+    [Header("Normal Laser Settings")]
+    public float range = 10f;
+
+    [Header("Homing Laser Settings")]
     [SerializeField]
     float _rotateSpeed = 200f;
 
@@ -79,13 +83,12 @@ public class Laser : MonoBehaviour
             }
 
 
-            if (distance > 10f)
+            if (distance > range)
             {
                 if (transform.parent != null)
                 {
                     Destroy(transform.parent.gameObject);
                 }
-
                 Destroy(gameObject);
             }
         }

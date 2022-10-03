@@ -182,7 +182,6 @@ public class Enemy : MonoBehaviour
     {
         transform.position = RandomizeStartPoint();
         startPos = transform.position;
-        _isDodged = false;
     }
 
     protected virtual Vector2 RandomizeStartPoint()

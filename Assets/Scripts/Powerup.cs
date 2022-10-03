@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-
     enum PoweupType 
     {
         TripleShot,

@@ -26,14 +26,18 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     GameObject[] _enemyPrefab;
 
-    
-
     [Header("Powerup Related Settings")]
     [SerializeField]
     GameObject[] _powerups;
 
     [SerializeField]
     float _powerupProbabilities;
+
+    [SerializeField]
+    GameObject _laserDiffuser;
+
+    [SerializeField]
+    float _diffuserSpawnProbability;
 
     GameObject _player;
 
@@ -55,8 +59,12 @@ public class SpawnManager : MonoBehaviour
             _uIManager.UpdateWaveText(_currentWave+1);
 
             StartCoroutine(SpawnRoutine());
+
             StartCoroutine(SpawnPowerupsRoutine());
+
             StartCoroutine(SpawnExtraPowerupsRoutine());
+
+            StartCoroutine(SpawnDiffuserRoutine());
         }
         
     }
@@ -77,7 +85,7 @@ public class SpawnManager : MonoBehaviour
         {
             yield return null;
 
-            while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave])
+            while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave] && destroyedEnemyNumber != _enemiesInWaves[_currentWave])
             {
 
                 float rand = Random.value;
@@ -96,7 +104,10 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator ResetEnemySpawn()
     {
+
         destroyedEnemyNumber = 0;
+
+        yield return new WaitForSeconds(1f);
 
         _currentWave++;
 
@@ -133,6 +144,8 @@ public class SpawnManager : MonoBehaviour
             {
                 yield return new WaitForSeconds(Random.Range(3f, 7f));
 
+                continue;
+
             }
             if (rand < 0.3f)
             {
@@ -147,11 +160,26 @@ public class SpawnManager : MonoBehaviour
                     Instantiate(_powerups[3], spawningPos, Quaternion.identity);
                 }
 
-                yield return new WaitForSeconds(Random.Range(3f, 7f));
-
-
             }
-        }
 
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+        }
+    }
+
+    IEnumerator SpawnDiffuserRoutine()
+    {
+        while (_player != null)
+        {
+            float rand = Random.value;
+
+            if(rand <= _diffuserSpawnProbability)
+            {
+                Vector3 spawningPos = new Vector3(Random.Range(-8f, 8f), 7, 0);
+
+                Instantiate(_laserDiffuser, spawningPos, Quaternion.identity);
+            }
+
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+        }
     }
 }

@@ -50,6 +50,8 @@ public class Player : MonoBehaviour
 
     bool _isCollecting;
 
+    bool _isDiffused;
+
     [HideInInspector]
     public bool isShielded;
 
@@ -225,7 +227,25 @@ public class Player : MonoBehaviour
 
                 _audioSource.Play();
 
-                Instantiate(_tripleShot, transform.position, Quaternion.identity);
+                GameObject newTripleShot =  Instantiate(_tripleShot, transform.position, Quaternion.identity);
+
+                for(int i = 0; i < newTripleShot.transform.childCount; i++)
+                {
+
+                    Laser childLaser = newTripleShot.transform.GetChild(i).GetComponent<Laser>();
+
+                    float laserRange = childLaser.range;
+
+                    if (_isDiffused)
+                    {
+                        childLaser.range = laserRange / 2;
+                    }
+                    else
+                    {
+                        childLaser.range = laserRange;
+                    }
+
+                }
 
             }
             else
@@ -234,7 +254,22 @@ public class Player : MonoBehaviour
 
                 _audioSource.Play();
 
-                Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+                GameObject newLaser  = Instantiate(_laser, transform.position + new Vector3(0, 1f, 0), Quaternion.identity);
+
+                Laser laser = newLaser.GetComponent<Laser>();
+
+                float laserRange = laser.range;
+
+                if (_isDiffused)
+                {
+                    laser.range = laserRange / 2;
+                }
+                else
+                {
+                    laser.range = laserRange;
+                }
+
+
             }
         }
     }
@@ -575,6 +610,22 @@ public class Player : MonoBehaviour
     }
     #endregion
 
-   
+    public void LaserDiffusion(float duration)
+    {
+        StartCoroutine(LaserDiffusionRoutine(duration));
+    }
+
+    IEnumerator LaserDiffusionRoutine(float duration)
+    {
+
+        _isDiffused = true;
+
+        yield return new WaitForSeconds(duration);
+
+        _isDiffused = false;
+    }
+
+
+
 
 }

@@ -88,11 +88,10 @@ public class SpawnManager : MonoBehaviour
             while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave] && destroyedEnemyNumber != _enemiesInWaves[_currentWave])
             {
 
-                float rand = Random.value;
 
                 int randEnemy = Random.Range(0, _enemyPrefab.Length);
 
-                GameObject newEnemy = Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
+                Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
 
                 _enemyNumber++;
 

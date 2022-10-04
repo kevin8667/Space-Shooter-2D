@@ -36,16 +36,23 @@ public class EnemyHealth : MonoBehaviour
 
         _anim = GetComponent<Animator>();
 
-        _audioSource = GetComponent<AudioSource>();
 
-        if (_audioSource == null)
+        if (enemy.enemyType == Enemy.EnemyType.Normal)
         {
-            Debug.LogError("The Audio Source is NULL!");
+            _audioSource = GetComponent<AudioSource>();
+
+            if (_audioSource == null)
+            {
+                Debug.LogError("The Audio Source is NULL!");
+            }
+            else
+            {
+                _audioSource.clip = _explosionSFX;
+            }
         }
-        else
-        {
-            _audioSource.clip = _explosionSFX;
-        }
+            
+
+        
 
     }
 
@@ -54,8 +61,6 @@ public class EnemyHealth : MonoBehaviour
         if (enemy.enemyType != Enemy.EnemyType.Normal)
         {
             Instantiate(_newExplosionPrefab, transform.position, Quaternion.identity);
-
-            PlayExplosionSFX();
 
             GetComponent<Collider2D>().enabled = false;
 

@@ -107,8 +107,6 @@ public class AggressiveEnemy : Enemy
     {
         transform.position = RandomizeStartPoint();
 
-        startPos = transform.position;
-
         transform.rotation = Quaternion.identity;
 
         transform.rotation *= Quaternion.Euler(0, 0, movementAttrDic[movementType].rotation);

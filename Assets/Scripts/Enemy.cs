@@ -10,7 +10,8 @@ public class Enemy : MonoBehaviour
     {
         Normal,
         Gunship,
-        Agressive
+        Agressive,
+        Snatcher
     };
 
     [Header("Movement Settings")]
@@ -48,8 +49,6 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     protected GameObject enemyLaser;
 
-    protected Vector2 startPos;
-
     public IDictionary<string, MovementAttributes> movementAttrDic;
 
     [HideInInspector]
@@ -75,8 +74,6 @@ public class Enemy : MonoBehaviour
 
         SetEnemy();
 
-        startPos = transform.position;
-
         if (isShielded)
         {
             shield.SetActive(true);
@@ -99,7 +96,7 @@ public class Enemy : MonoBehaviour
 
     }
 
-    protected void RandomizeType()
+    protected virtual void RandomizeType()
     {
         float rand = Random.value;
 
@@ -181,12 +178,11 @@ public class Enemy : MonoBehaviour
     protected virtual void ResetPosition()
     {
         transform.position = RandomizeStartPoint();
-        startPos = transform.position;
     }
 
     protected virtual Vector2 RandomizeStartPoint()
     {
-        Vector2 point = new Vector2(0, 0);
+        Vector2 point = new Vector2();
         switch (movementType)
         {
             case "TopToBottom":
@@ -397,7 +393,7 @@ public class Enemy : MonoBehaviour
             enemyHealth.Damage();
 
         }
-        else if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
+        if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
         {
 
             if (isShielded)
@@ -415,7 +411,5 @@ public class Enemy : MonoBehaviour
 
         }
     }
-
-
 
 }

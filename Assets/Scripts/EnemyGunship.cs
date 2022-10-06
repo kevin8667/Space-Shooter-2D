@@ -9,12 +9,15 @@ public class EnemyGunship : Enemy
     float _fireRate = 0.5f;
     float _canFire = 0f;
 
+    [SerializeField]
+    GameObject _enemyLaser;
+
     // Update is called once per frame
     void Update()
     {
         MoveEnemy();
 
-        if (isArmed && Time.time >= _canFire)
+        if (Time.time >= _canFire)
         {
             FireLaser();
         }
@@ -49,7 +52,7 @@ public class EnemyGunship : Enemy
     {
         _canFire = Time.time + _fireRate;
 
-        GameObject newLaser = Instantiate(enemyLaser, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject newLaser = Instantiate(_enemyLaser, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
 
         Laser[] lasers = newLaser.GetComponentsInChildren<Laser>();
 

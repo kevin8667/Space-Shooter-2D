@@ -59,26 +59,22 @@ MonoBehaviour:
     startPoint: {x: 0, y: 7}
     randomRangeMin: -8
     randomRangeMax: 8
-    moveDistance: 15
     rotation: 0
   - movementType: LeftToRight
     startPoint: {x: -11, y: 0}
     randomRangeMin: -4
     randomRangeMax: 2
-    moveDistance: 22
     rotation: 90
   - movementType: RightToLeft
     startPoint: {x: 11, y: 0}
     randomRangeMin: -4
     randomRangeMax: 2
-    moveDistance: 22
     rotation: 270
   movementType: 
   isShielded: 0
-  isArmed: 0
   shield: {fileID: 0}
-  enemyLaser: {fileID: 0}
   isDestroyed: 0
+  enemyHealth: {fileID: 3016695181940542594}
   _aimingRange: 5
   _rammingSpeed: 8
 --- !u!114 &3016695181940542594

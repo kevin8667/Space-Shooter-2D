@@ -12,6 +12,19 @@ public class AggressiveEnemy : Enemy
 
     bool _isAiming, _isLockedOn;
 
+    GameObject _player;
+
+    void Start()
+    {
+
+        SetEnemy();
+
+        _player = GameObject.Find("Player");
+
+        enemyHealth = GetComponent<EnemyHealth>();
+
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -20,9 +33,7 @@ public class AggressiveEnemy : Enemy
 
         float distanceToTarget = 0f;
 
-        GameObject target = GameObject.Find("Player");
-
-        if(target != null)
+        if(_player != null)
         {
             distanceToTarget = Vector3.Distance(GameObject.Find("Player").transform.position, transform.position);
         }
@@ -30,11 +41,11 @@ public class AggressiveEnemy : Enemy
 
         if (distanceToTarget <= _aimingRange && !_isAiming)
         {
-            if (target != null)
+            if (_player != null)
             {
                 _isAiming = true;
 
-                StartCoroutine(AimingRoutine());
+                StartCoroutine(AimingRoutine(_player));
             }
             
         }
@@ -67,9 +78,9 @@ public class AggressiveEnemy : Enemy
         }
     }
 
-    void FaceTarget()
+    void FaceTarget(GameObject target)
     {
-        Vector3 relativePos = GameObject.Find("Player").transform.position - transform.position;
+        Vector3 relativePos = target.transform.position - transform.position;
 
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 0) * -relativePos;
 
@@ -79,7 +90,7 @@ public class AggressiveEnemy : Enemy
     }
 
 
-    IEnumerator AimingRoutine()
+    IEnumerator AimingRoutine(GameObject target)
     {
         float elapsedTime = 0;
         float duration = 1.5f;
@@ -88,7 +99,7 @@ public class AggressiveEnemy : Enemy
 
         while (elapsedTime < duration)
         {
-            FaceTarget();
+            FaceTarget(target);
 
             elapsedTime += Time.deltaTime;
 

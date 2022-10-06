@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Enemy : MonoBehaviour
 {
@@ -11,7 +9,8 @@ public class Enemy : MonoBehaviour
         Normal,
         Gunship,
         Agressive,
-        Snatcher
+        Snatcher,
+        Turret
     };
 
     [Header("Movement Settings")]
@@ -28,7 +27,6 @@ public class Enemy : MonoBehaviour
         public string movementType;
         public Vector2 startPoint;
         public float randomRangeMin, randomRangeMax;
-        public float moveDistance;
         public float rotation;
     }
 
@@ -41,13 +39,8 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public bool isShielded;
 
-    public bool isArmed;
-
     [SerializeField]
     protected GameObject shield;
-
-    [SerializeField]
-    protected GameObject enemyLaser;
 
     public IDictionary<string, MovementAttributes> movementAttrDic;
 
@@ -56,6 +49,7 @@ public class Enemy : MonoBehaviour
 
     bool _isDodged;
 
+    [SerializeField]
     protected EnemyHealth enemyHealth;
 
      void Awake()
@@ -78,8 +72,6 @@ public class Enemy : MonoBehaviour
         {
             shield.SetActive(true);
         }
-
-        enemyHealth = GetComponent<EnemyHealth>();
 
     }
 

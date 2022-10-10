@@ -91,9 +91,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scoreIncrement: 10
-  _explosionSFX: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
-  _shieldBreakingSFX: {fileID: 8300000, guid: 0f8ee8b7c1de70c4dbfa131350c1dd49, type: 3}
-  _newExplosionPrefab: {fileID: 0}
+  explosionSFX: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
+  shieldBreakingSFX: {fileID: 8300000, guid: 0f8ee8b7c1de70c4dbfa131350c1dd49, type: 3}
+  newExplosionPrefab: {fileID: 0}
 --- !u!212 &4629288733340139875
 SpriteRenderer:
   m_ObjectHideFlags: 0

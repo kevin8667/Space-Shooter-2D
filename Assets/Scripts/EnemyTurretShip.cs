@@ -7,7 +7,7 @@ public class EnemyTurretShip : Enemy
 {
     [SerializeField]
     float _fireRate = 0.5f;
-    float _canFire = 0f;
+    float _canFire = 1f;
 
     [SerializeField]
     GameObject _turret;

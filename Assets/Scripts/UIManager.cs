@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using Newtonsoft.Json.Linq;
 using System;
+using Unity.VisualScripting;
 
 public class UIManager : MonoBehaviour
 {
@@ -28,6 +29,12 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     TMP_Text _gameOverText, _gameOverTips;
+
+    [SerializeField]
+    TMP_Text _warningText;
+
+    [SerializeField]
+    TMP_Text _winText;
 
     [SerializeField]
     GameObject _pauseMenu;
@@ -55,6 +62,8 @@ public class UIManager : MonoBehaviour
         _score.text = "Score: " + _gameManager.score;
 
         _wave.color = new Color(1, 0, 0, 0);
+
+        _warningText.color = new Color(1, 0, 0, 0);
     }
 
     public void UpdateScore()
@@ -107,6 +116,12 @@ public class UIManager : MonoBehaviour
         _gameOverTips.gameObject.SetActive(true);
     }
 
+    public void ShowWinningUI()
+    {
+        _winText.gameObject.SetActive(true);
+        _gameOverTips.gameObject.SetActive(true);
+    }
+
     public void TogglePauseMenu()
     {
         _pauseMenu.SetActive(!_pauseMenu.activeInHierarchy);
@@ -156,5 +171,24 @@ public class UIManager : MonoBehaviour
         }
 
     }
-     
+    
+    public void StartWarning()
+    {
+        StartCoroutine(WarningSequence());
+    }
+
+    IEnumerator WarningSequence()
+    {
+        float elapsedTime = 0;
+
+        while(elapsedTime < 4f)
+        {
+            elapsedTime += Time.deltaTime;
+
+            _warningText.color = Color.Lerp(new Color(1, 0, 0, 0), new Color(1, 0, 0, 1), MathF.Sin(elapsedTime * 4f));
+
+            yield return null;
+        }
+
+    }
 }

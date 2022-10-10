@@ -11,6 +11,8 @@ public class Laser : MonoBehaviour
     [Header("Normal Laser Settings")]
     public float range = 10f;
 
+    public int power = 1;
+
     [Header("Homing Laser Settings")]
     [SerializeField]
     float _rotateSpeed = 200f;

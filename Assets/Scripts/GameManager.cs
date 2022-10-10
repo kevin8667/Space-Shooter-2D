@@ -12,8 +12,13 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     UIManager _uIManager;
 
+    [SerializeField]
+    AudioClip _warningSFX;
+
+    AudioSource _audioSource;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         score = 0;
 
@@ -21,6 +26,12 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 1;
 
+        _audioSource = GetComponent<AudioSource>();
+
+        if (_audioSource.GetComponent<AudioSource>()!= null)
+        {
+            _audioSource.clip = _warningSFX;
+        }
 
     }
 
@@ -53,6 +64,22 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
+    public void WinTheGame()
+    {
+        StartCoroutine(WinningSequence());
+    }
+
+    IEnumerator WinningSequence()
+    {
+        yield return new WaitForSeconds(2.5f);
+
+        isGameOVer = true;
+
+        _uIManager.ShowWinningUI();
+
+        Time.timeScale = 0;
+    }
+
     public void TogglePause()
     {
         _uIManager.TogglePauseMenu();
@@ -66,6 +93,13 @@ public class GameManager : MonoBehaviour
             Time.timeScale = 1;
         }
         
+    }
+
+    public void WarningSequence()
+    {
+        _uIManager.StartWarning();
+
+        _audioSource.Play();
     }
     
 }

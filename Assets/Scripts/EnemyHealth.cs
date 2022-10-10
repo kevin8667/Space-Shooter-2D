@@ -13,62 +13,58 @@ public class EnemyHealth : MonoBehaviour
 
     public int ScoreIncrement => _scoreIncrement;
 
-    GameManager _gameManager;
+    protected GameManager gameManager;
 
-    SpawnManager _spawnManager;
-
-    [SerializeField]
-    AudioClip _explosionSFX, _shieldBreakingSFX;
+    protected SpawnManager spawnManager;
 
     [SerializeField]
-    GameObject _newExplosionPrefab;
+    protected AudioClip explosionSFX, shieldBreakingSFX;
 
-    AudioSource _audioSource;
+    [SerializeField]
+    protected GameObject newExplosionPrefab;
+
+    protected AudioSource audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
         enemy = GetComponent<Enemy>();
 
-        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
 
         _anim = GetComponent<Animator>();
 
 
-        if (enemy.enemyType == Enemy.EnemyType.Normal)
+        if (enemy.enemyType == Enemy.EnemyType.Normal || enemy.enemyType == Enemy.EnemyType.Gunship)
         {
-            _audioSource = GetComponent<AudioSource>();
+            audioSource = GetComponent<AudioSource>();
 
-            if (_audioSource == null)
+            if (audioSource == null)
             {
                 Debug.LogError("The Audio Source is NULL!");
             }
             else
             {
-                _audioSource.clip = _explosionSFX;
+                audioSource.clip = explosionSFX;
             }
         }
-            
-
-        
-
     }
 
     public void Damage()
     {
         if (enemy.enemyType != Enemy.EnemyType.Normal)
         {
-            Instantiate(_newExplosionPrefab, transform.position, Quaternion.identity);
+            Instantiate(newExplosionPrefab, transform.position, Quaternion.identity);
 
             GetComponent<Collider2D>().enabled = false;
 
             enemy.isDestroyed = true;
 
-            _gameManager.AddScore(_scoreIncrement);
+            gameManager.AddScore(_scoreIncrement);
 
-            _spawnManager.destroyedEnemyNumber++;
+            spawnManager.destroyedEnemyNumber++;
 
             Destroy(gameObject, 0.2f);
         }
@@ -82,26 +78,26 @@ public class EnemyHealth : MonoBehaviour
 
             enemy.isDestroyed = true;
 
-            _gameManager.AddScore(_scoreIncrement);
+            gameManager.AddScore(_scoreIncrement);
 
-            _spawnManager.destroyedEnemyNumber++;
+            spawnManager.destroyedEnemyNumber++;
 
             Destroy(gameObject, 2.7f);
         }
     }
 
-    public void PlayShieldBreakingSFX()
+    public virtual void PlayShieldBreakingSFX()
     {
-        _audioSource.clip = _shieldBreakingSFX;
+        audioSource.clip = shieldBreakingSFX;
 
-        _audioSource.Play();
+        audioSource.Play();
     }
 
-    public void PlayExplosionSFX()
+    public virtual void PlayExplosionSFX()
     {
-        _audioSource.clip = _explosionSFX;
+        audioSource.clip = explosionSFX;
 
-        _audioSource.Play();
+        audioSource.Play();
     }
 
 }

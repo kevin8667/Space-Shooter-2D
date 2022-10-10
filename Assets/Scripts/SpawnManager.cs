@@ -24,6 +24,9 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     GameObject[] _enemyPrefab;
 
+    [SerializeField]
+    GameObject _boss;
+
     [Header("Powerup Related Settings")]
     [SerializeField]
     GameObject[] _powerups;
@@ -41,6 +44,8 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     UIManager _uIManager;
+
+    bool _isAllWavesCompleted;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +79,17 @@ public class SpawnManager : MonoBehaviour
             StartCoroutine(ResetEnemySpawn());
         }
 
+        
+        if(destroyedEnemyNumber == _enemiesInWaves[_currentWave] && _currentWave+1 == _waveNumber && !_isAllWavesCompleted)
+        {
+            FindObjectOfType<GameManager>().WarningSequence();
+
+            Instantiate(_boss, new Vector2(0, 9), Quaternion.identity);
+
+            _isAllWavesCompleted = true;
+
+        }
+
     }
 
 
@@ -101,7 +117,6 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator ResetEnemySpawn()
     {
-
         destroyedEnemyNumber = 0;
 
         yield return new WaitForSeconds(1f);

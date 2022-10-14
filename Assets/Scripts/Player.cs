@@ -18,14 +18,25 @@ public class Player : MonoBehaviour
     [Header("Weapon Settings")]
     [SerializeField]
     float _fireRate = 0.3f;
+
     float _canFire = 0f;
+
     public int maxAmmo = 15;
+
     public int ammoCount;
+
     [SerializeField]
     float _reloadTime = 3f;
+
     float _holdTimer;
+
     [SerializeField]
     int _bombCount = 3;
+
+    [SerializeField]
+    float _bombCoolDown = 5f;
+
+    float _canUseBomb = 0f;
 
     [Header("Thruster Settings")]
     [SerializeField]
@@ -46,7 +57,7 @@ public class Player : MonoBehaviour
 
     bool _isReloading, _isOutOfFuel;
 
-    bool _isBombing;
+    //bool _isBombing;
 
     bool _isCollecting;
 
@@ -193,12 +204,7 @@ public class Player : MonoBehaviour
 
         }
 
-        if (FindObjectOfType<Bomb>() == null)
-        {
-            _isBombing = false;
-        }
-
-        if (Input.GetKeyDown(KeyCode.B) && !_isBombing)
+        if (Input.GetKeyDown(KeyCode.B) && Time.time >= _canUseBomb)
         {
             DeployBomb();
         }
@@ -277,10 +283,10 @@ public class Player : MonoBehaviour
 
     void DeployBomb()
     {
-        if(_bombCount > 0 )
-        {
-            _isBombing = true;
+        _canUseBomb = Time.time + _bombCoolDown;
 
+        if(_bombCount > 0 )
+        {           
             Instantiate(_bomb, new Vector2(0, 0), Quaternion.identity);
 
             _uImanager.UpdateBombs(--_bombCount);

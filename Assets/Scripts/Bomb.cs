@@ -4,6 +4,9 @@ using UnityEngine;
 public class Bomb : MonoBehaviour
 {
     [SerializeField]
+    int _power = 1;
+
+    [SerializeField]
     ParticleSystem _explosion;
 
     [SerializeField]
@@ -13,11 +16,16 @@ public class Bomb : MonoBehaviour
 
     Enemy[] enemies;
 
+    Boss _boss;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         _audioSource = gameObject.GetComponent<AudioSource>();
+
+        _boss = FindObjectOfType<Boss>();
 
         if (_audioSource == null)
         {
@@ -33,16 +41,18 @@ public class Bomb : MonoBehaviour
 
     private void Update()
     {
-
-        foreach (Enemy enemy in enemies)
+        if (enemies != null)
         {
-            if (enemy != null && !enemy.isDestroyed)
+            foreach (Enemy enemy in enemies)
             {
-                enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, new Vector2(0, 0), 10f * Time.deltaTime);
+                if (enemy != null && !enemy.isDestroyed)
+                {
+                    enemy.transform.position = Vector2.MoveTowards(enemy.transform.position, new Vector2(0, 0), 10f * Time.deltaTime);
+                }
+
             }
- 
         }
-        
+
     }
 
     void Explosion()
@@ -51,28 +61,48 @@ public class Bomb : MonoBehaviour
 
         _explosion.Play();
 
-        enemies = FindObjectsOfType<Enemy>();
-
-        foreach (Enemy enemy in enemies)
+        if (_boss != null)
         {
-            if (!enemy.isDestroyed)
-            {
-                enemy.speed = 0;
+            Debug.Log("HIT");
 
-                enemy.GetComponent<Collider2D>().enabled = false;
+            BossHealth bossHealth = _boss.GetComponent<BossHealth>();
 
-                FindObjectOfType<GameManager>().AddScore(enemy.GetComponent<EnemyHealth>().ScoreIncrement);
+            bossHealth.BossDamage(_power);
 
-                FindObjectOfType<SpawnManager>().destroyedEnemyNumber++;
+            _audioSource.Play();
 
-                Destroy(enemy.gameObject, 1.3f);
-            }
-           
+            Destroy(gameObject, 6f);
+
+            return;
         }
 
-        _audioSource.Play();
+        enemies = FindObjectsOfType<Enemy>();
 
-        Destroy(gameObject, 6f);
+        if(enemies != null)
+        {
+            foreach (Enemy enemy in enemies)
+            {
+                if (!enemy.isDestroyed)
+                {
+                    enemy.speed = 0;
+
+                    enemy.GetComponent<Collider2D>().enabled = false;
+
+                    FindObjectOfType<GameManager>().AddScore(enemy.GetComponent<EnemyHealth>().ScoreIncrement);
+
+                    FindObjectOfType<SpawnManager>().destroyedEnemyNumber++;
+
+                    Destroy(enemy.gameObject, 1.3f);
+                }
+
+            }
+
+            _audioSource.Play();
+
+            Destroy(gameObject, 6f);
+        }
+
+        
 
     }
 

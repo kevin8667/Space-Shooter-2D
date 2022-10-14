@@ -2,48 +2,204 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class Boss : MonoBehaviour
 {
-    [HideInInspector]
-    bool isShielded;
-
-    [SerializeField]
-    GameObject shield;
 
     [HideInInspector]
-    public bool  isDestroyed;
+    bool _isShielded;
 
     [SerializeField]
-    BossHealth bossHealth;
+    GameObject _shield;
+
+    [SerializeField]
+    GameObject _oritalPointer;
+
+    [SerializeField]
+    GameObject _shieldBit;
+
+    List<Vector3> _orbitalPositions;
+    
+    List<GameObject> _orbitalPointers;
+
+    [SerializeField]
+    float _orbitingSpeed;
+
+    public float OrbitingSpeed => _orbitingSpeed;
+
+    public int shieldBitNumber = 0;
+
+    bool _isPositioned;
+
+    [HideInInspector]
+    public bool isDestroyed;
+
+    [SerializeField]
+    BossHealth _bossHealth;
+
+    [SerializeField]
+    GameObject _searchingCursor;
+
+    [SerializeField]
+    GameObject _turret;
+
+    [SerializeField]
+    GameObject _bossLaser;
+
+    float _fireRate = 0.5f;
+
+    float _canFire = 0f;
+
+    GameObject _player;
 
     void Start()
     {
         StartCoroutine(Entrance());
-       
+
+        _player = GameObject.FindWithTag("Player");
+
+        _orbitalPointers = new List<GameObject>();
+
+        _orbitalPositions = new List<Vector3>();
+
     }
 
     void Update()
     {
+        if(transform.position.y == 2 && !_isPositioned)
+        {
+            _isPositioned = true;
 
+            GetComponent<Collider2D>().enabled = true;
+
+            SpawnShieldBits();
+        }
+
+
+        if(shieldBitNumber == 0 || !_isPositioned)
+        {
+            ToggleShield(false);
+        }
+        else
+        {
+            ToggleShield(true);
+
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SearchingTarget();
+        }
 
     }
 
-    public void ToggleShield()
+    public void ToggleShield(bool shieldState)
     {
-        shield.SetActive(isShielded);
+        _shield.SetActive(shieldState);
+
+        _isShielded = shieldState;
     }
 
 
     IEnumerator Entrance()
     {
-        while (transform.position.y > 2)
+        while (!_isPositioned)
         {
-            transform.Translate(Vector3.down * 2.5f * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(0, 2), 2.5f * Time.deltaTime);
+
+            GetComponent<Collider2D>().enabled = false;
 
             yield return null;
         }
     }
 
+
+    void SearchingTarget()
+    {
+        Instantiate(_searchingCursor, transform.position - new Vector3(0, 1.75f, 0), Quaternion.identity);
+    }
+
+    public void TurretFaceTarget()
+    {
+        Vector3 relativePos = _player.transform.position - _turret.transform.position;
+
+        Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 0) * -relativePos;
+
+        Quaternion targetRotation = Quaternion.LookRotation(Vector3.forward, rotatedVectorToTarget);
+
+        _turret.transform.rotation = Quaternion.RotateTowards(_turret.transform.rotation, targetRotation, 1000f * Time.deltaTime);
+    }
+
+
+    public void StartShootingLaser()
+    {
+        StartCoroutine(ShotingRoutine());
+    } 
+
+    IEnumerator ShotingRoutine()
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < 2f)
+        {
+            elapsedTime += Time.deltaTime;
+
+            if (Time.time >= _canFire)
+            {
+                _canFire = Time.time + _fireRate;
+
+                GameObject laser = Instantiate(_bossLaser, _turret.transform.position, _turret.transform.rotation);
+
+                laser.GetComponent<Laser>().isEnemyLaser = true;
+            }
+
+
+            yield return null;
+        }
+
+    }
+
+
+    public void CreateOrbitalPoints(int num, Vector3 point, float radius)
+    {
+        
+        for (int i = 0; i < num; i++)
+        {
+
+            float radians = 2 * Mathf.PI / num * i;
+
+            float vertical = Mathf.Sin(radians);
+
+            float horizontal = Mathf.Cos(radians);
+
+            Vector3 spawnDirection = new Vector3(horizontal, vertical);
+
+            _orbitalPositions.Add( point + spawnDirection * radius);
+
+            _orbitalPointers.Add(Instantiate(_oritalPointer, transform.position, Quaternion.identity));
+
+            _orbitalPointers[i].transform.parent = transform;
+
+            _orbitalPointers[i].transform.position = _orbitalPositions[i];
+
+        }
+    }
+
+    void SpawnShieldBits()
+    {
+        CreateOrbitalPoints(shieldBitNumber, transform.position, 3);
+
+        for (int i = 0; i < shieldBitNumber; i++)
+        {
+            GameObject shieldBit = Instantiate(_shieldBit, transform.position, Quaternion.identity);
+
+            shieldBit.transform.parent = transform;
+
+            shieldBit.GetComponent<ShieldBit>().orbitalPointer = _orbitalPointers[i];
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -60,14 +216,16 @@ public class Boss : MonoBehaviour
         if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
         {
 
-            if (isShielded)
+            if (_isShielded)
             {
+                Destroy(other.gameObject);
+
                 return;
             }
 
             Destroy(other.gameObject);
 
-            bossHealth.BossDamage(other.GetComponent<Laser>().power);
+            _bossHealth.BossDamage(other.GetComponent<Laser>().power);
 
         }
     }

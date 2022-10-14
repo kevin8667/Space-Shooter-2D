@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
     [Header("Genaral Settings")]
     [SerializeField]
-    float _speed = 8.0f;
+    float _speed = 8f;
+
+    [SerializeField]
+    float _homingSpeed = 12f;
 
     [Header("Normal Laser Settings")]
     public float range = 10f;
 
-    public int power = 1;
+    public float power = 1f;
 
     [Header("Homing Laser Settings")]
     [SerializeField]
@@ -44,6 +48,11 @@ public class Laser : MonoBehaviour
         _currentPos = transform.position;
 
         _targets = new List<GameObject>();
+
+        if (isHomingLaser)
+        {
+            power /= 2;
+        }
 
     }
 
@@ -101,18 +110,34 @@ public class Laser : MonoBehaviour
     {
         _targets = new List<GameObject>();
 
+
+        if (_targets.Count == 0 || GameObject.FindGameObjectsWithTag("Enemy") == null)
+        {
+            _ridigBody2D.velocity = transform.up * _speed;
+
+            Destroy(gameObject, _duration);
+        }
+
+
         foreach (GameObject t in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            if (!t.gameObject.GetComponent<Enemy>().isDestroyed)
+
+            if (t.GetComponent<Enemy>() != null && !t.GetComponent<Enemy>().isDestroyed)
+            {
+                _targets.Add(t);
+
+            }
+
+            if (t.GetComponent<Boss>() != null && !t.GetComponent<Boss>().isDestroyed)
             {
                 _targets.Add(t);
             }
 
-        }
+            if (t.GetComponent<ShieldBit>() != null && !t.GetComponent<ShieldBit>().isDestroyed)
+            {
+                _targets.Add(t);
+            }
 
-        if(_targets.Count == 0)
-        {
-            _ridigBody2D.velocity = transform.up * _speed;
         }
 
         foreach (GameObject t in _targets)
@@ -134,41 +159,76 @@ public class Laser : MonoBehaviour
 
     void ChaseTarget()
     {
-        if (_transformMin != null && !_transformMin.GetComponent<Enemy>().isDestroyed)
+        if(_transformMin != null)
         {
+            if(_transformMin.GetComponent<Enemy>() != null)
+            {
+                if (!_transformMin.GetComponent<Enemy>().isDestroyed)
+                {
+                    MoveHomingLaser();
+                }
+                else if (_transformMin.GetComponent<Enemy>().isDestroyed)
+                {
 
-            Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
+                    _minDistance = Mathf.Infinity;
 
-            direction.Normalize();
+                    FindNearestTraget();
 
-            float rotateAmount = Vector3.Cross(direction, transform.up).z;
+                    MoveHomingLaser();
+                }
+            }
 
-            _ridigBody2D.angularVelocity = -rotateAmount * _rotateSpeed;
+            if (_transformMin.GetComponent<Boss>() != null)
+            {
+                if (!_transformMin.GetComponent<Boss>().isDestroyed)
+                {
+                    MoveHomingLaser();
+                }
+                else if (_transformMin.GetComponent<Boss>().isDestroyed)
+                {
 
-            _ridigBody2D.velocity = transform.up * _speed;
+                    _minDistance = Mathf.Infinity;
 
-            Destroy(gameObject, _duration);
+                    FindNearestTraget();
 
+                    MoveHomingLaser();
+                }
+            }
 
-        }else if (_transformMin != null && _transformMin.GetComponent<Enemy>().isDestroyed)
-        {
+            if (_transformMin.GetComponent<ShieldBit>() != null)
+            {
+                if (!_transformMin.GetComponent<ShieldBit>().isDestroyed)
+                {
+                    MoveHomingLaser();
+                }
+                else if (_transformMin.GetComponent<ShieldBit>().isDestroyed)
+                {
 
-            _minDistance = Mathf.Infinity;
+                    _minDistance = Mathf.Infinity;
 
-            FindNearestTraget();
+                    FindNearestTraget();
 
-            Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
-
-            direction.Normalize();
-
-            float rotateAmount = Vector3.Cross(direction, transform.up).z;
-
-            _ridigBody2D.angularVelocity = -rotateAmount * _rotateSpeed;
-
-            _ridigBody2D.velocity = transform.up * _speed;
-
-            Destroy(gameObject, _duration);
+                    MoveHomingLaser();
+                }
+            }
         }
+
+       
+    }
+
+    void MoveHomingLaser()
+    {
+        Vector2 direction = (Vector2)_transformMin.position - _ridigBody2D.position;
+
+        direction.Normalize();
+
+        float rotateAmount = Vector3.Cross(direction, transform.up).z;
+
+        _ridigBody2D.angularVelocity = -rotateAmount * _rotateSpeed;
+
+        _ridigBody2D.velocity = transform.up * _homingSpeed;
+
+        Destroy(gameObject, _duration);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

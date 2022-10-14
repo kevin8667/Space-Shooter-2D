@@ -6,7 +6,7 @@ using UnityEngine;
 public class BossHealth : EnemyHealth
 {
     [SerializeField]
-    int _bossHp;
+    float _bossHp;
 
     Boss _boss;
     
@@ -30,7 +30,7 @@ public class BossHealth : EnemyHealth
         }
     }
 
-    public void BossDamage(int damageAmount)
+    public void BossDamage(float damageAmount)
     {
         _bossHp -= damageAmount;
 

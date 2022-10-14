@@ -263,8 +263,8 @@ RectTransform:
   m_GameObject: {fileID: 234610033}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 217191939}
   m_RootOrder: 6
@@ -1247,10 +1247,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb801ef93b008c4995d02871ca3acec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _waveNumber: 3
+  _waveNumber: 1
   _spawningInterval: 1.5
   destroyedEnemyNumber: 0
-  _enemiesInWaves: 010000000100000001000000
+  _enemiesInWaves: 01000000
   _enemyPrefab:
   - {fileID: 1929522453564359244, guid: 3dfc10769c40ff246930344b46790de8, type: 3}
   - {fileID: 5093634278387049304, guid: 7160afd130a1e154a856f4c2526d85d5, type: 3}
@@ -1413,8 +1413,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 5.784832
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

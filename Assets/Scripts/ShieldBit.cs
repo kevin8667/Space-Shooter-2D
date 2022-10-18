@@ -109,7 +109,12 @@ public class ShieldBit : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-       
+        if (other.GetComponent<BossLaser>())
+        {
+            return;
+        }
+
+
         if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
         {
 

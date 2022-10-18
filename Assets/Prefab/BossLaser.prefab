@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 2934044509488411508}
   - component: {fileID: 5270677355234848421}
   - component: {fileID: 7020139271837980776}
-  - component: {fileID: -8504080383998681100}
+  - component: {fileID: 5853684749690471112}
   - component: {fileID: 4622677527449273754}
   m_Layer: 0
-  m_Name: HomingLaser
+  m_Name: BossLaser
   m_TagString: Laser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4180101029269929479}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.07, y: 2.53746, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.28405, y: 0.28405, z: 0.28405}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a45cdfc424bf06b468474f21bf628c6a, type: 2}
+  - {fileID: 2100000, guid: ba6a5b684a5468346a7d5d3e4fd3cf21, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -124,7 +124,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-8504080383998681100
+--- !u!114 &5853684749690471112
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,17 +133,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4180101029269929479}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63f62e9b7cf2b9a4993c0078273d4ce3, type: 3}
+  m_Script: {fileID: 11500000, guid: 4bbca3a45b3140a4da332f5564c85b7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 10
-  _homingSpeed: 12
-  range: 10
-  power: 1
-  _rotateSpeed: 750
-  _duration: 2
-  isHomingLaser: 1
-  isEnemyLaser: 0
+  _speed: 15
+  range: 15
+  isEnemyLaser: 1
+  _sinFrequency: 20
+  sinAmplitude: 0.5
 --- !u!96 &4622677527449273754
 TrailRenderer:
   serializedVersion: 2
@@ -165,7 +162,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a45cdfc424bf06b468474f21bf628c6a, type: 2}
+  - {fileID: 2100000, guid: ba6a5b684a5468346a7d5d3e4fd3cf21, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -186,7 +183,7 @@ TrailRenderer:
   m_SortingLayerID: -1085714633
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Time: 2
+  m_Time: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -203,7 +200,7 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.49951762
+        time: 0.27314946
         value: 0
         inSlope: 0
         outSlope: 0
@@ -216,7 +213,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.1254902, g: 0.69803923, b: 1, a: 1}
+      key0: {r: 1, g: 0.10283645, b: 0, a: 1}
       key1: {r: 0.1254902, g: 0.7568628, b: 1, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}

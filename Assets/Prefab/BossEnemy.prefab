@@ -306,14 +306,13 @@ MonoBehaviour:
   _shield: {fileID: 735743716493756057}
   _oritalPointer: {fileID: 9020110853423449128, guid: 4c6d3dfdd82f8c34ab610f8139052b36, type: 3}
   _shieldBit: {fileID: 1335862119152763669, guid: 2627e620ba7edf944a4385c8a5723db5, type: 3}
-  _orbitalPointers: []
   _orbitingSpeed: 180
   shieldBitNumber: 3
   isDestroyed: 0
   _bossHealth: {fileID: 817156305293621821}
   _searchingCursor: {fileID: 279996598692857978, guid: ed4273b9c16cd5c4cb995437ef65e1ed, type: 3}
   _turret: {fileID: 303104788598376457}
-  _bossLaser: {fileID: 1778460645259023981, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
+  _bossLaser: {fileID: 4180101029269929479, guid: d2ed7e002663675439f209eec2bd08e2, type: 3}
 --- !u!114 &817156305293621821
 MonoBehaviour:
   m_ObjectHideFlags: 0

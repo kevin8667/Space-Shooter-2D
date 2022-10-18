@@ -10,36 +10,22 @@ public class Boss : MonoBehaviour
     [HideInInspector]
     bool _isShielded;
 
-    [SerializeField]
-    GameObject _shield;
-
-    [SerializeField]
-    GameObject _oritalPointer;
-
-    [SerializeField]
-    GameObject _shieldBit;
-
-    List<Vector3> _orbitalPositions;
-    
-    List<GameObject> _orbitalPointers;
-
-    [SerializeField]
-    float _orbitingSpeed;
-
-    public float OrbitingSpeed => _orbitingSpeed;
-
-    public int shieldBitNumber = 0;
-
     bool _isPositioned;
+
+    bool _isSeraching;
 
     [HideInInspector]
     public bool isDestroyed;
 
+    [Header("Boss Health")]
     [SerializeField]
     BossHealth _bossHealth;
 
+    [Header("Weapon Settings")]
     [SerializeField]
     GameObject _searchingCursor;
+
+    GameObject _newSearchingCursor;
 
     [SerializeField]
     GameObject _turret;
@@ -51,13 +37,30 @@ public class Boss : MonoBehaviour
 
     float _canFire = 0f;
 
-    GameObject _player;
+    [Header("Shield Settings")]
+    [SerializeField]
+    GameObject _shield;
+
+    [SerializeField]
+    GameObject _oritalPointer;
+
+    [SerializeField]
+    GameObject _shieldBit;
+
+    List<Vector3> _orbitalPositions;
+
+    List<GameObject> _orbitalPointers;
+
+    [SerializeField]
+    float _orbitingSpeed;
+
+    public float OrbitingSpeed => _orbitingSpeed;
+
+    public int shieldBitNumber = 0;
 
     void Start()
     {
         StartCoroutine(Entrance());
-
-        _player = GameObject.FindWithTag("Player");
 
         _orbitalPointers = new List<GameObject>();
 
@@ -74,6 +77,12 @@ public class Boss : MonoBehaviour
             GetComponent<Collider2D>().enabled = true;
 
             SpawnShieldBits();
+
+        }
+
+        if(_isPositioned && !_isSeraching)
+        {
+            StartCoroutine(TargetingAttack());
         }
 
 
@@ -86,13 +95,6 @@ public class Boss : MonoBehaviour
             ToggleShield(true);
 
         }
-
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SearchingTarget();
-        }
-
     }
 
     public void ToggleShield(bool shieldState)
@@ -115,15 +117,14 @@ public class Boss : MonoBehaviour
         }
     }
 
-
-    void SearchingTarget()
+    void StartTargeting()
     {
-        Instantiate(_searchingCursor, transform.position - new Vector3(0, 1.75f, 0), Quaternion.identity);
+        _newSearchingCursor =Instantiate(_searchingCursor, transform.position - new Vector3(0, 1.75f, 0), Quaternion.identity);       
     }
 
     public void TurretFaceTarget()
     {
-        Vector3 relativePos = _player.transform.position - _turret.transform.position;
+        Vector3 relativePos = _newSearchingCursor.transform.position - _turret.transform.position;
 
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 0) * -relativePos;
 
@@ -131,7 +132,6 @@ public class Boss : MonoBehaviour
 
         _turret.transform.rotation = Quaternion.RotateTowards(_turret.transform.rotation, targetRotation, 1000f * Time.deltaTime);
     }
-
 
     public void StartShootingLaser()
     {
@@ -150,17 +150,29 @@ public class Boss : MonoBehaviour
             {
                 _canFire = Time.time + _fireRate;
 
-                GameObject laser = Instantiate(_bossLaser, _turret.transform.position, _turret.transform.rotation);
+                Instantiate(_bossLaser, _turret.transform.position, _turret.transform.rotation);
 
-                laser.GetComponent<Laser>().isEnemyLaser = true;
+                GameObject LeftLaser = Instantiate(_bossLaser, _turret.transform.position, _turret.transform.rotation);
+
+                LeftLaser.GetComponent<BossLaser>().sinAmplitude *= -1;
             }
-
 
             yield return null;
         }
 
     }
 
+    IEnumerator TargetingAttack()
+    {
+        _isSeraching = true;
+
+        StartTargeting();
+
+        yield return new WaitForSeconds(8f);
+
+        _isSeraching = false;
+
+    }
 
     public void CreateOrbitalPoints(int num, Vector3 point, float radius)
     {
@@ -203,6 +215,12 @@ public class Boss : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.GetComponent<BossLaser>())
+        {
+            return;
+        }
+
+
         if (other.tag == "Player")
         {
             PlayerHealth playerHealth = other.gameObject.GetComponent<PlayerHealth>();
@@ -213,6 +231,7 @@ public class Boss : MonoBehaviour
             }
 
         }
+
         if (other.tag == "Laser" && !other.GetComponent<Laser>().isEnemyLaser && !isDestroyed)
         {
 

@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43de4ea39eced244bbae3f04bd5e8f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _searchingDuration: 3
+  _targetingDuration: 3
   _lockOnSFX: {fileID: 8300000, guid: 923dd8ba6d45a6747a0b6b68e78f5313, type: 3}
 --- !u!1001 &3812345481750610379
 PrefabInstance:

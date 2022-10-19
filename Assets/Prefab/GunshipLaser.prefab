@@ -23,16 +23,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4494707559406793499}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: -0.00000004371139}
+  m_LocalRotation: {x: 0, y: 0, z: -1, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4114564922491917211}
   - {fileID: 6595708977855734228}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
 --- !u!1001 &2458481663084458256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40,10 +40,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3379756995636479340}
     m_Modifications:
-    - target: {fileID: 1367345358277842314, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1778460645259023981, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_Name
       value: EnemyLaser
@@ -54,23 +50,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.61
+      value: 1.072
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.87
+      value: 0.858
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -118,10 +114,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3379756995636479340}
     m_Modifications:
-    - target: {fileID: 1367345358277842314, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1778460645259023981, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_Name
       value: EnemyLaser (1)
@@ -132,23 +124,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.58
+      value: -1.072
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.87
+      value: 0.858
       objectReference: {fileID: 0}
     - target: {fileID: 1947691335433331339, guid: af6b33456bba158468dad3e88a32a8e1, type: 3}
       propertyPath: m_LocalPosition.z

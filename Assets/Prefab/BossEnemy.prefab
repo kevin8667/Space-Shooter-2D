@@ -303,16 +303,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c8c260a6b9f6fc468a5a6bd5e97dcda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shield: {fileID: 735743716493756057}
-  _oritalPointer: {fileID: 9020110853423449128, guid: 4c6d3dfdd82f8c34ab610f8139052b36, type: 3}
-  _shieldBit: {fileID: 1335862119152763669, guid: 2627e620ba7edf944a4385c8a5723db5, type: 3}
-  _orbitingSpeed: 180
-  shieldBitNumber: 3
   isDestroyed: 0
   _bossHealth: {fileID: 817156305293621821}
   _searchingCursor: {fileID: 279996598692857978, guid: ed4273b9c16cd5c4cb995437ef65e1ed, type: 3}
   _turret: {fileID: 303104788598376457}
   _bossLaser: {fileID: 4180101029269929479, guid: d2ed7e002663675439f209eec2bd08e2, type: 3}
+  _fragBomb: {fileID: 2311044591848434199, guid: 54ab6233e90a53448a06544fb175192d, type: 3}
+  _shield: {fileID: 735743716493756057}
+  _oritalPointer: {fileID: 9020110853423449128, guid: 4c6d3dfdd82f8c34ab610f8139052b36, type: 3}
+  _shieldBit: {fileID: 1335862119152763669, guid: 2627e620ba7edf944a4385c8a5723db5, type: 3}
+  _orbitingSpeed: 180
+  shieldBitNumber: 3
 --- !u!114 &817156305293621821
 MonoBehaviour:
   m_ObjectHideFlags: 0

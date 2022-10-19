@@ -52,7 +52,7 @@ public class EnemyGunship : Enemy
     {
         _canFire = Time.time + _fireRate;
 
-        GameObject newLaser = Instantiate(_enemyLaser, transform.position + new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject newLaser = Instantiate(_enemyLaser, transform.position + new Vector3(0, -1, 0), Quaternion.identity);
 
         Laser[] lasers = newLaser.GetComponentsInChildren<Laser>();
 

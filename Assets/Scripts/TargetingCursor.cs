@@ -16,10 +16,14 @@ public class TargetingCursor : MonoBehaviour
 
     AudioSource _audioSource;
 
+    ParticleSystem.EmissionModule _cursorEmission;
+
     // Start is called before the first frame update
     void Start()
     {
         _player = GameObject.Find("Player");
+
+        _cursorEmission = transform.GetChild(0).GetComponent<ParticleSystem>().emission;
 
         _boss = FindObjectOfType<Boss>();
 
@@ -53,9 +57,14 @@ public class TargetingCursor : MonoBehaviour
 
         _audioSource.Play();
 
+        _cursorEmission.rateOverTime = 6f;
+
         yield return new WaitForSeconds(1f);
 
-        _boss.StartShootingLaser();
+        if(_boss != null)
+        {
+            _boss.StartShootingLaser();
+        }
 
         Destroy(gameObject, 2f);
     }

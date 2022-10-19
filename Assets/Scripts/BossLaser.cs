@@ -27,11 +27,11 @@ public class BossLaser : MonoBehaviour
 
         if (sinAmplitude > 0)
         {
-            transform.position -= transform.right;
+            transform.position -= transform.right * 0.5f;
         }
         else if (sinAmplitude < 0)
         {
-            transform.position += transform.right;
+            transform.position += transform.right * 0.5f;
         }
 
         StartCoroutine(WaveMovementRoutine());
@@ -40,6 +40,7 @@ public class BossLaser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         float distance = Vector2.Distance(transform.position, _startPosition);
 
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -67,7 +68,7 @@ public class BossLaser : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
 

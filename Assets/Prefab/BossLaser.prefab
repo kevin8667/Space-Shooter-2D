@@ -139,7 +139,7 @@ MonoBehaviour:
   _speed: 15
   range: 15
   isEnemyLaser: 1
-  _sinFrequency: 20
+  _sinFrequency: 30
   sinAmplitude: 0.5
 --- !u!96 &4622677527449273754
 TrailRenderer:

@@ -14,6 +14,8 @@ public class Boss : MonoBehaviour
 
     bool _isSeraching;
 
+    bool _isDeployingBomb;
+
     [HideInInspector]
     public bool isDestroyed;
 
@@ -36,6 +38,9 @@ public class Boss : MonoBehaviour
     float _fireRate = 0.5f;
 
     float _canFire = 0f;
+
+    [SerializeField]
+    GameObject _fragBomb;
 
     [Header("Shield Settings")]
     [SerializeField]
@@ -85,8 +90,13 @@ public class Boss : MonoBehaviour
             StartCoroutine(TargetingAttack());
         }
 
+        if (_isPositioned && !_isDeployingBomb)
+        {
+            StartCoroutine(FragBombAttack());
+        }
 
-        if(shieldBitNumber == 0 || !_isPositioned)
+
+        if (shieldBitNumber == 0 || !_isPositioned)
         {
             ToggleShield(false);
         }
@@ -95,15 +105,8 @@ public class Boss : MonoBehaviour
             ToggleShield(true);
 
         }
+
     }
-
-    public void ToggleShield(bool shieldState)
-    {
-        _shield.SetActive(shieldState);
-
-        _isShielded = shieldState;
-    }
-
 
     IEnumerator Entrance()
     {
@@ -174,6 +177,44 @@ public class Boss : MonoBehaviour
 
     }
 
+    void DeployFragBomb()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+
+            float randomX = 0;
+
+            if (i == 0)
+            {
+                randomX = Random.Range(2.5f, 8f);
+            }
+
+            if (i == 1)
+            {
+                randomX = Random.Range(-2.5f, -8f);
+            }
+
+            float randomY = Random.Range(3f, 1f);
+
+            GameObject bomb = Instantiate(_fragBomb, transform.position, Quaternion.identity);
+
+            bomb.GetComponent<FragBomb>().deployPoint = new Vector3(randomX, randomY);
+        }
+    }
+
+    IEnumerator FragBombAttack()
+    {
+        _isDeployingBomb = true;
+
+        DeployFragBomb();
+
+        yield return new WaitForSeconds(Random.Range(6f, 10f));
+
+        _isDeployingBomb = false;
+
+    }
+
+
     public void CreateOrbitalPoints(int num, Vector3 point, float radius)
     {
         
@@ -211,6 +252,13 @@ public class Boss : MonoBehaviour
 
             shieldBit.GetComponent<ShieldBit>().orbitalPointer = _orbitalPointers[i];
         }
+    }
+
+    public void ToggleShield(bool shieldState)
+    {
+        _shield.SetActive(shieldState);
+
+        _isShielded = shieldState;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

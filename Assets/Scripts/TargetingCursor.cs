@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class TargetingCursor : MonoBehaviour
 {
@@ -38,6 +40,14 @@ public class TargetingCursor : MonoBehaviour
 
     }
 
+    void Update()
+    {
+        if(_boss == null)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     IEnumerator SearchingTarget()
     {
         float elapsedTime = 0;
@@ -48,7 +58,10 @@ public class TargetingCursor : MonoBehaviour
 
             transform.position = Vector2.MoveTowards(transform.position, _player.transform.position, 4f * Time.deltaTime);
 
-            _boss.TurretFaceTarget();
+            if(_boss != null)
+            {
+                _boss.TurretFaceTarget();
+            }
 
             yield return null;
         }

@@ -87,9 +87,7 @@ public class PlayerHealth : MonoBehaviour
         {
             _isDestroyed = true;
 
-            _uIManager.ShowGameOverUI();
-
-            _gameManager.isGameOVer = true;
+            _gameManager.LoseTheGame();
 
             _player.StopMoving();
 

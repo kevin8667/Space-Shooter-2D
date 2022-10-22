@@ -12,6 +12,17 @@ public class CameraManager : MonoBehaviour
     [SerializeField]
     float _duration = 0.3f;
 
+    [SerializeField]
+    GameManager _gameManager;
+
+    void Update()
+    {
+        if (_gameManager.isGameOVer)
+        {
+            StopAllCoroutines();
+        }
+    }
+
     public void CamaraShake()
     {
         StartCoroutine(ShakeSequence());

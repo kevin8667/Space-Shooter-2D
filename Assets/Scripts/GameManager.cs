@@ -64,6 +64,29 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
+
+    public void LoseTheGame()
+    {
+        StartCoroutine(LosingSequence());
+        
+    }
+
+    IEnumerator LosingSequence()
+    {
+        yield return new WaitForSeconds(2.5f);
+
+        isGameOVer = true;
+
+        _uIManager.ShowGameOverUI();
+
+        Time.timeScale = 0;
+
+        foreach (GameObject projectile in GameObject.FindGameObjectsWithTag("Laser"))
+        {
+            Destroy(projectile);
+        }
+    }
+
     public void WinTheGame()
     {
         StartCoroutine(WinningSequence());
@@ -78,6 +101,11 @@ public class GameManager : MonoBehaviour
         _uIManager.ShowWinningUI();
 
         Time.timeScale = 0;
+
+        foreach (GameObject projectile in GameObject.FindGameObjectsWithTag("Laser"))
+        {
+            Destroy(projectile);
+        }
     }
 
     public void TogglePause()

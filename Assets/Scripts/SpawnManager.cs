@@ -102,7 +102,6 @@ public class SpawnManager : MonoBehaviour
             while (_player != null && _enemyNumber < _enemiesInWaves[_currentWave] && destroyedEnemyNumber != _enemiesInWaves[_currentWave])
             {
 
-
                 int randEnemy = Random.Range(0, _enemyPrefab.Length);
 
                 Instantiate(_enemyPrefab[randEnemy], gameObject.transform.position, Quaternion.identity);
@@ -154,7 +153,7 @@ public class SpawnManager : MonoBehaviour
 
             if (rand > 0.7f)
             {
-                yield return new WaitForSeconds(Random.Range(3f, 7f));
+                yield return new WaitForSeconds(Random.Range(7f, 15f));
 
                 continue;
 
@@ -174,7 +173,7 @@ public class SpawnManager : MonoBehaviour
 
             }
 
-            yield return new WaitForSeconds(Random.Range(3f, 7f));
+            yield return new WaitForSeconds(Random.Range(7f, 15f));
         }
     }
 
@@ -191,7 +190,7 @@ public class SpawnManager : MonoBehaviour
                 Instantiate(_laserDiffuser, spawningPos, Quaternion.identity);
             }
 
-            yield return new WaitForSeconds(Random.Range(3f, 7f));
+            yield return new WaitForSeconds(Random.Range(7f, 15f));
         }
     }
 }

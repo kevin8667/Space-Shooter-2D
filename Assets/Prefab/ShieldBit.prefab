@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Hp: 1
-  _respawnTime: 3
+  _respawnTime: 6
   isDestroyed: 0
   orbitalPointer: {fileID: 0}
   _lineRenderer: {fileID: 6517253783876451796}

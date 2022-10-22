@@ -63,6 +63,8 @@ public class Boss : MonoBehaviour
 
     public int shieldBitNumber = 0;
 
+    UIManager _uImanager;
+
     void Start()
     {
         StartCoroutine(Entrance());
@@ -70,6 +72,8 @@ public class Boss : MonoBehaviour
         _orbitalPointers = new List<GameObject>();
 
         _orbitalPositions = new List<Vector3>();
+
+        _uImanager= FindObjectOfType<UIManager>();
 
     }
 
@@ -83,6 +87,7 @@ public class Boss : MonoBehaviour
 
             SpawnShieldBits();
 
+            _uImanager.ShowBossHP();
         }
 
         if(_isPositioned && !_isSeraching)
@@ -127,6 +132,11 @@ public class Boss : MonoBehaviour
 
     public void TurretFaceTarget()
     {
+        if (_newSearchingCursor == null)
+        {
+            return;
+        }
+
         Vector3 relativePos = _newSearchingCursor.transform.position - _turret.transform.position;
 
         Vector3 rotatedVectorToTarget = Quaternion.Euler(0, 0, 0) * -relativePos;

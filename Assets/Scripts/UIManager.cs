@@ -38,7 +38,10 @@ public class UIManager : MonoBehaviour
     GameObject _pauseMenu;
 
     [SerializeField]
-    Image _reloadImage, _fuelImage;
+    GameObject _bossHp;
+
+    [SerializeField]
+    Image _reloadImage, _fuelImage, _bossHpBar;
 
     [SerializeField]
     RectTransform _canvasRect;
@@ -48,6 +51,8 @@ public class UIManager : MonoBehaviour
     public Image ReloadImage => _reloadImage;
 
     public Image FuelImage => _fuelImage;
+
+    public Image BossHpBar => _bossHpBar;
 
     [SerializeField]
     Player _player;
@@ -187,6 +192,11 @@ public class UIManager : MonoBehaviour
 
             yield return null;
         }
-
     }
+
+    public void ShowBossHP()
+    {
+        _bossHp.SetActive(true);
+    }
+
 }

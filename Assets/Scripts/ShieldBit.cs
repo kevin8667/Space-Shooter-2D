@@ -13,8 +13,10 @@ public class ShieldBit : MonoBehaviour
 
     Vector3[] _linePositions = new Vector3[2];
 
+    [HideInInspector]
     public bool isDestroyed;
 
+    [HideInInspector]
     public GameObject orbitalPointer;
 
     Boss _boss;

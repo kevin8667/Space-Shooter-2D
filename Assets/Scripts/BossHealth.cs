@@ -8,15 +8,21 @@ public class BossHealth : EnemyHealth
     [SerializeField]
     float _bossHp;
 
+    float _bossMaxHp;
+
     Boss _boss;
+
+    UIManager _uIManager;
     
     void Start()
     {
         _boss = GetComponent<Boss>();
 
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
 
-        spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        spawnManager = FindObjectOfType<SpawnManager>();
+
+        _uIManager = FindObjectOfType<UIManager>();
 
         audioSource = GetComponent<AudioSource>();
 
@@ -28,13 +34,17 @@ public class BossHealth : EnemyHealth
         {
             audioSource.clip = explosionSFX;
         }
+
+        _bossMaxHp = _bossHp;
     }
 
     public void BossDamage(float damageAmount)
     {
         _bossHp -= damageAmount;
 
-        if (_bossHp < 1 && !_boss.isDestroyed)
+        _uIManager.UpdateImageFillAmount(_uIManager.BossHpBar, _bossHp / _bossMaxHp);
+
+        if (_bossHp <= 0 && !_boss.isDestroyed)
         {
             _boss.isDestroyed = true;
 

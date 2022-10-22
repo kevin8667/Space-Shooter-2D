@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68c67f6e9d254c24eb7d9f4a66803705, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 9
+  _speed: 4
   _range: 15
   sortingLayerName: Foreground
   orderInLayer: 1

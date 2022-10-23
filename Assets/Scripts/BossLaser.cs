@@ -8,6 +8,8 @@ public class BossLaser : MonoBehaviour
     [SerializeField]
     float _speed = 8f;
 
+    float tempSpeed;
+
     public float range = 10f;
 
     public bool isEnemyLaser;
@@ -35,12 +37,13 @@ public class BossLaser : MonoBehaviour
         }
 
         StartCoroutine(WaveMovementRoutine());
+
+        tempSpeed = _speed;
     }
 
     // Update is called once per frame
     void Update()
     {
-
         float distance = Vector2.Distance(transform.position, _startPosition);
 
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
@@ -49,7 +52,6 @@ public class BossLaser : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
     IEnumerator WaveMovementRoutine()
@@ -60,7 +62,11 @@ public class BossLaser : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
 
-            transform.position = transform.position + transform.right * Mathf.Sin(elapsedTime * _sinFrequency) * sinAmplitude * 0.1f;
+            if(Time.timeScale!= 0)
+            {
+                transform.position = transform.position + transform.right * Mathf.Sin(elapsedTime * _sinFrequency) * sinAmplitude * 0.1f;
+            }
+            
 
             yield return null;
         }

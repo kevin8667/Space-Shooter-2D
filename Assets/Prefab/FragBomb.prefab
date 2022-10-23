@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c2b75b0f8893c4a986aea1fee00b0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fragmentNumber: 20
+  _fragmentNumber: 15
   _burstRadius: 0.5
   _explosion: {fileID: 4503667534483399633, guid: 4c462c83416530844b3d39ecd32df241, type: 3}
   _fragment: {fileID: 3469669252774534955, guid: 022dc385617dc3d44b7360e2bb85dfb7, type: 3}

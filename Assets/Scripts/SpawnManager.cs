@@ -139,7 +139,7 @@ public class SpawnManager : MonoBehaviour
 
             Instantiate(_powerups[Random.Range(0, 3)], spawningPos, Quaternion.identity);
 
-            yield return new WaitForSeconds(Random.Range(3f, 7f));
+            yield return new WaitForSeconds(Random.Range(5f, 10f));
         }
     }
 
@@ -151,24 +151,18 @@ public class SpawnManager : MonoBehaviour
 
             float rand = Random.value;
 
-            if (rand > 0.7f)
-            {
-                yield return new WaitForSeconds(Random.Range(7f, 15f));
-
-                continue;
-
-            }
-            if (rand < 0.3f)
+            
+            if (rand <= 0.3f)
             {
                 float rand2 = Random.value;
 
                 if(rand2 >= _powerupProbabilities)
                 {
-                    Instantiate(_powerups[4], spawningPos, Quaternion.identity);
+                    Instantiate(_powerups[3], spawningPos, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(_powerups[3], spawningPos, Quaternion.identity);
+                    Instantiate(_powerups[4], spawningPos, Quaternion.identity);
                 }
 
             }
